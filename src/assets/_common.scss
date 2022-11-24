@@ -1,0 +1,59 @@
+.btn {
+	cursor: pointer;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-content: center;
+
+	padding: 12px;
+
+	border-radius: 12px;
+
+	font-weight: bold;
+
+	transition: background-color 1000ms;
+}
+
+.btn:active {
+	background-color: #e8f0fe;
+	transition: background-color 0ms;
+}
+
+.h-group {
+	display: flex;
+	flex-direction: row;
+
+	>.btn:not(:first-child, :last-child) {
+		border-radius: 0;
+	}
+
+	>.btn:first-child {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	>.btn:last-child {
+		border-top-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+}
+
+.v-group {
+	display: flex;
+	flex-direction: column;
+
+	>.btn:not(:first-child, :last-child) {
+		border-radius: 0;
+	}
+
+	>:first-child {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	>:last-child {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+}
