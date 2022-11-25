@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { useEditorStore } from '@/stores/editor'
 import { ref, onMounted } from 'vue'
+
+import { useStore } from '@/stores/store'
+import { getDistanceSqr } from '../../util'
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
@@ -13,6 +15,9 @@ let start_y = NaN
 
 let last_x = NaN
 let last_y = NaN
+
+var last_cx = NaN
+var last_cy = NaN
 
 let distanceSqr = NaN
 
@@ -28,7 +33,7 @@ onMounted(() => {
 
 	loaded()
 
-	let dpi = 100.0
+	let dpi = 150.0
 	canvas.width = 11.0 * dpi
 	canvas.height = 8.5 * dpi
 	console.log({ width: canvas.width, height: canvas.height })
@@ -60,6 +65,8 @@ function touchstart(clientX: number, clientY: number) {
 	last_y = y
 	start_x = x
 	start_y = y
+	last_cx = x
+	last_cy = y
 
 	imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 
@@ -71,45 +78,64 @@ function touchmove(clientX: number, clientY: number) {
 	let x = transClientX(clientX)
 	let y = transClientY(clientY)
 
-	let xc = (last_x + x) / 2.0
-	let yc = (last_y + y) / 2.0
-	drawPath.quadraticCurveTo(last_x, last_y, xc, yc)
+	let isNearLast = getDistanceSqr(last_x, last_y, x, y) <= 5 * 5
+	let isNearStart = getDistanceSqr(start_x, start_y, x, y) <= 16 * 16
 
 	ctx.putImageData(imageData, 0, 0)
 
-	let isNearStart = Math.abs(last_x - start_x) <= 16.0 && Math.abs(last_y - start_y) <= 16.0
+	ctx.lineWidth = useStore().brushSizePx
+	ctx.strokeStyle = useStore().brushConfig.color
+	ctx.lineCap = 'round'
+	ctx.lineJoin = 'round'
+	if (isNearLast)
+		ctx.stroke(drawPath)
+
 	if (isNearStart) {
-		ctx.strokeStyle = `lightgray`
-		xc = (last_x + start_x) / 2.0
-		yc = (last_y + start_y) / 2.0
 		ctx.beginPath()
 		ctx.moveTo(x, y)
-		ctx.quadraticCurveTo(last_x, last_y, xc, yc)
+		let xc = (last_x + x) / 2.0
+		let yc = (last_y + y) / 2.0
+		// ctx.quadraticCurveTo(last_x, last_y, xc, yc)
 		ctx.quadraticCurveTo(xc, yc, start_x, start_y)
-		ctx.closePath()
+		// ctx.quadraticCurveTo(last_cx, last_cy, start_x, start_y)
+		// ctx.lineTo(start_x, start_y)
 		ctx.stroke()
 	}
 
-	ctx.lineWidth = Math.pow(2.0, useEditorStore().editor.brushSize)
-	ctx.strokeStyle = `black`
-	ctx.lineCap = 'round'
-	ctx.lineJoin = 'round'
-	ctx.stroke(drawPath)
+	if (isNearLast) {
+		ctx.beginPath()
+		ctx.moveTo(last_cx, last_cy)
+		let xc = (last_x + x) / 2.0
+		let yc = (last_y + y) / 2.0
+		// ctx.quadraticCurveTo(last_x, last_y, xc, yc)
+		ctx.quadraticCurveTo(last_x, last_y, x, y)
+		// ctx.lineTo(x, y)
+		ctx.stroke()
+	}
+	else {
+		let xc = (last_x + x) / 2.0
+		let yc = (last_y + y) / 2.0
+		last_cx = xc
+		last_cy = yc
+		drawPath.quadraticCurveTo(last_x, last_y, xc, yc)
+		// drawPath.quadraticCurveTo(last_x, last_y, x, y)
+		ctx.stroke(drawPath)
 
-	distanceSqr += (x * x) + (y * y)
+		distanceSqr += (x * x) + (y * y)
 
-	last_x = x
-	last_y = y
+		last_x = x
+		last_y = y
+	}
 }
 
 function touchend() {
 	ctx.putImageData(imageData, 0, 0)
 
-	let isNearStart = Math.abs(last_x - start_x) <= 16.0 && Math.abs(last_y - start_y) <= 16.0
+	let isNearStart = getDistanceSqr(start_x, start_y, last_x, last_y) <= 16.0 * 16.0
 
 	if (distanceSqr <= 1.0) {
 		ctx.fillStyle = 'black'
-		let size = Math.pow(2, useEditorStore().editor.brushSize) / 2.0
+		let size = useStore().brushSizePx / 2.0
 		ctx.beginPath()
 		ctx.arc(last_x, last_y, size, 0, Math.PI * 2)
 		ctx.fill()
@@ -136,7 +162,7 @@ function transClientX(x: number): number {
 }
 
 function transClientY(y: number): number {
-	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height)
+	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height) - 18
 }
 
 </script>
@@ -152,13 +178,12 @@ function transClientY(y: number): number {
 
 <style scoped>
 .canvas {
-	display: block;
-	max-width: 100%;
-	max-height: 100%;
+	/* max-width: 100%; */
+	/* max-height: 100%; */
 	background-color: white;
 	image-rendering: optimizeQuality;
 
 	border-radius: 12px;
-	box-shadow: 0 0 0 2px hsla(0, 0%, 95%, 1.0);
+	box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0);
 }
 </style>

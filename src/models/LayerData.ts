@@ -1,6 +1,6 @@
-import type { SketchData } from './SketchData'
+import type SketchData from './SketchData'
 
-export class LayerData {
+export default class LayerData {
 	public data: Uint8ClampedArray
 
 	public sketch: SketchData

@@ -36,17 +36,33 @@ function orDefault(value: any | undefined, def: any): any {
 		return def
 	return value
 }
+
+var startY = NaN
+var startValue = NaN
+function touchstart(e: TouchEvent) {
+	startValue = value.value
+	startY = e.touches.item(0)!.clientY
+}
+
+function touchmove(e: TouchEvent) {
+	let v = startValue + (startY - e.touches.item(0)!.clientY) / 200.0
+	v = Math.round(v * 10.0) / 10.0
+	value.value = Math.min(Math.max(v, orDefault(props.min, -Infinity)), orDefault(props.max, Infinity))
+	emits('change', value.value)
+}
 </script>
 
 <template>
-	<div class="v-group">
+	<div class="v-group" @touchstart="touchstart" @touchmove="touchmove">
 		<div class="btn inc" @click="inc()">
 			<slot name="inc">
 				<PlusIcon />
 			</slot>
 		</div>
 
-		<div ref="ref_value" class="btn value">{{ value }}</div>
+		<div ref="ref_value" class="btn value">{{
+				value
+		}}</div>
 
 		<div class="btn dec" @click="dec()">
 			<slot name="dec">
@@ -57,28 +73,5 @@ function orDefault(value: any | undefined, def: any): any {
 </template>
 
 <style scoped>
-/* .bar-spin-btn {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	border-radius: 24px;
-} */
 
-/* .btn {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-content: center;
-	padding: 12px;
-	font-weight: bold;
-	transition: background-color 1000ms;
-}
-
-.btn.inc {
-	border-radius: 12px 12px 0 0;
-}
-
-.btn.dec {
-	border-radius: 0 0 12px 12px;
-} */
 </style>

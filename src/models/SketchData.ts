@@ -1,6 +1,6 @@
-import { LayerData } from './LayerData'
+import LayerData from './LayerData'
 
-export class SketchData {
+export default class SketchData {
 	public width: number
 	public height: number
 	public layers: LayerData[] = []
@@ -12,7 +12,9 @@ export class SketchData {
 		this.addLayer()
 	}
 
-	public addLayer() {
-		this.layers.push(new LayerData(this))
+	public addLayer(): LayerData {
+		let layer = new LayerData(this)
+		this.layers.push(layer)
+		return layer
 	}
 }

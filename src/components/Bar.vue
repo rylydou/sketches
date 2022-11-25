@@ -20,8 +20,8 @@
 .bar {
 	position: relative;
 	background-color: white;
-	box-shadow: 0 0 0 2px hsla(0, 0%, 95%, 1.0);
-	width: 64px;
+	box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0);
+	min-width: 64px;
 
 	>* {
 		position: absolute;

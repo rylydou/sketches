@@ -2,7 +2,7 @@
 
 import { ref } from 'vue'
 
-import { useEditorStore } from './stores/editor'
+import { useStore } from './stores/store'
 
 import Bar from './components/Bar.vue'
 import BarItem from './components/BarItem.vue'
@@ -20,9 +20,11 @@ import LayersIcon from './components/icons/LayersIcon.vue'
 import UndoIcon from './components/icons/UndoIcon.vue'
 import RedoIcon from './components/icons/RedoIcon.vue'
 import ArrowIcon from './components/icons/ArrowIcon.vue'
+import ColorIcon from './components/icons/ColorIcon.vue'
+import EraserIcon from './components/icons/EraserIcon.vue'
 
 function setSize(val: number) {
-	useEditorStore().editor.brushSize = val
+	useStore().brushConfig.size = val
 }
 
 </script>
@@ -59,17 +61,19 @@ function setSize(val: number) {
 
 		<Bar>
 			<template #start>
-
+				<BarItem style="background-color: #8aae00; color: white">
+					<ColorIcon />
+				</BarItem>
+				<BarItem>
+					<EditIcon />
+				</BarItem>
+				<BarItem>
+					<EraserIcon />
+				</BarItem>
 			</template>
 
 			<template #middle>
-				<BarItem>
-					<EditIcon />
-				</BarItem>
 				<BarSpinButton @change="setSize" :min="-4" :max="7" />
-				<BarItem>
-					<EditIcon />
-				</BarItem>
 			</template>
 
 			<template #end>
@@ -99,7 +103,7 @@ function setSize(val: number) {
 	background-color: hsla(200, 20%, 98%, 1.0);
 	background-color: hsla(30, 25%, 98%, 1.0);
 	/* background-color: hsla(0, 0%, 98%, 1.0); */
-	/* background-color: white; */
+	background-color: white;
 	/* background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='30' height='30' patternTransform='scale(1) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,100%,1)'/><path d='M 10,-2.55e-7 V 20 Z M -1.1677362e-8,10 H 20 Z' transform='translate(5,0)' stroke-width='0.5' stroke='hsla(0, 0%, 90%, 1)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>"); */
 
 	/* background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(1) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,98%,1)'/><path d='M10 15a5 5 0 110-10 5 5 0 010 10z' transform='translate(10,0)' stroke-width='3.5' stroke='hsla(0,0%,93%,1)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(20,0)' fill='url(%23a)'/></svg>"); */
@@ -119,7 +123,8 @@ function setSize(val: number) {
 	justify-content: center;
 	align-content: center;
 	gap: 24px;
-	padding: 16px;
-	flex-grow: 1;
+	padding: 16px 0;
+	/* flex-grow: 1; */
+	overflow: hidden;
 }
 </style>
