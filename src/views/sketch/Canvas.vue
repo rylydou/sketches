@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import { useStore } from '@/stores/store'
+import { useSessionStore } from '@/stores/session'
 import { getDistanceSqr } from '../../util'
+
+var store = useSessionStore()
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
@@ -83,8 +85,8 @@ function touchmove(clientX: number, clientY: number) {
 
 	ctx.putImageData(imageData, 0, 0)
 
-	ctx.lineWidth = useStore().brushSizePx
-	ctx.strokeStyle = useStore().brushConfig.color
+	ctx.lineWidth = store.brushSizePx
+	ctx.strokeStyle = store.brushConfig.color
 	ctx.lineCap = 'round'
 	ctx.lineJoin = 'round'
 	if (isNearLast)
@@ -135,7 +137,7 @@ function touchend() {
 
 	if (distanceSqr <= 1.0) {
 		ctx.fillStyle = 'black'
-		let size = useStore().brushSizePx / 2.0
+		let size = store.brushSizePx / 2.0
 		ctx.beginPath()
 		ctx.arc(last_x, last_y, size, 0, Math.PI * 2)
 		ctx.fill()
@@ -178,6 +180,7 @@ function transClientY(y: number): number {
 
 <style scoped>
 .canvas {
+	aspect-ratio: 11 / 8.5;
 	/* max-width: 100%; */
 	/* max-height: 100%; */
 	background-color: white;
