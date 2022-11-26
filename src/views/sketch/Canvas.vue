@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import { useSessionStore } from '@/stores/session'
-import { getDistanceSqr } from '../../util'
+import { useSessionStore } from '@/store'
+import { getDistanceSqr } from '@/util'
 
 var store = useSessionStore()
 
@@ -136,7 +136,7 @@ function touchend() {
 	let isNearStart = getDistanceSqr(start_x, start_y, last_x, last_y) <= 16.0 * 16.0
 
 	if (distanceSqr <= 1.0) {
-		ctx.fillStyle = 'black'
+		ctx.fillStyle = store.brushConfig.color
 		let size = store.brushSizePx / 2.0
 		ctx.beginPath()
 		ctx.arc(last_x, last_y, size, 0, Math.PI * 2)
@@ -166,16 +166,13 @@ function transClientX(x: number): number {
 function transClientY(y: number): number {
 	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height) - 18
 }
-
 </script>
 
 <template>
 	<canvas ref="ref_canvas" class="canvas"
 		@touchstart="(e) => touchstart(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
 		@touchmove="(e) => touchmove(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
-		@touchend="touchend()">
-
-	</canvas>
+		@touchend="touchend()" />
 </template>
 
 <style scoped>

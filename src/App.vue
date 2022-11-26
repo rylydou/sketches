@@ -3,13 +3,14 @@
 import { ref } from 'vue'
 
 import { getContrastColor } from '@/util'
-import { useSessionStore } from '@/stores/session'
+import { useSessionStore } from '@/store'
 
 import Bar from '@/components/Bar.vue'
 import BarItem from '@/components/BarItem.vue'
 import BarSpinButton from '@/components/BarSpinButton.vue'
 import Canvas from '@/views/sketch/Canvas.vue'
 import ColorPalette from '@/views/sketch/ColorPalette.vue'
+import DrawingConfigMenu from '@/views/sketch/DrawingConfigMenu.vue'
 
 import { Dropdown, hideAllPoppers, } from 'floating-vue'
 
@@ -29,8 +30,8 @@ import EraserIcon from '@/components/icons/EraserIcon.vue'
 
 var store = useSessionStore()
 
-function setSize(val: number) {
-	store.brushConfig.size = val
+function setSize(sizeFactor: number) {
+	store.brushConfig.sizeFactor = sizeFactor
 }
 
 </script>
@@ -54,15 +55,20 @@ function setSize(val: number) {
 			</template>
 
 			<template #end>
-				<BarItem>
-					<TuneIcon />
-				</BarItem>
+				<Dropdown placement="right" :offset-distance="16">
+					<BarItem>
+						<TuneIcon />
+					</BarItem>
+
+					<template #popper>
+						<DrawingConfigMenu />
+					</template>
+				</Dropdown>
 			</template>
 		</Bar>
 
 		<div class="pages">
 			<Canvas />
-			<!-- <Canvas /> -->
 		</div>
 
 		<Bar>
@@ -74,9 +80,9 @@ function setSize(val: number) {
 					<EditIcon />
 				</BarItem>
 
-				<BarSpinButton @change="setSize" :min="-4" :max="7" />
+				<BarSpinButton @change="setSize" :min="0" :max="9" />
 
-				<Dropdown placement="left" :offset-distance="16" :arrow="true">
+				<Dropdown placement="left" :offset-distance="16">
 					<BarItem class="solid"
 						:style="{ backgroundColor: store.brushConfig.color, color: getContrastColor(store.brushConfig.color, true), }">
 						<ColorIcon style="" />
@@ -86,7 +92,7 @@ function setSize(val: number) {
 						<ColorPalette @picked="hideAllPoppers()" />
 					</template>
 				</Dropdown>
-			</template>
+			</template>}
 
 			<template #end>
 				<div class="v-group">
@@ -112,9 +118,6 @@ function setSize(val: number) {
 	width: 100vw;
 	height: 100vh;
 
-	/* background-color: hsla(200, 20%, 98%, 1.0); */
-	/* background-color: hsla(30, 25%, 98%, 1.0); */
-	/* background-color: hsla(0, 0%, 98%, 1.0); */
 	background-color: white;
 }
 

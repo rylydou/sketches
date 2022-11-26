@@ -7,6 +7,7 @@
 	align-content: center;
 
 	padding: 12px;
+	gap: 12px;
 
 	border-radius: 12px;
 
@@ -33,9 +34,15 @@
 .h-group {
 	display: flex;
 	flex-direction: row;
+	justify-content: stretch;
+	flex-grow: 1;
 
 	>.btn:not(:first-child, :last-child) {
 		border-radius: 0;
+	}
+
+	>.btn:not(:last-child, :only-child) {
+		border-right: solid 1px hsla(0 0% 90% / 1.0);
 	}
 
 	>.btn:first-child {
@@ -45,7 +52,7 @@
 
 	>.btn:last-child {
 		border-top-left-radius: 0;
-		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
 	}
 }
 
@@ -235,11 +242,11 @@
 }
 
 .v-popper__popper[data-popper-placement^=right] .v-popper__arrow-inner {
-	left: -4px;
+	left: -9px;
 }
 
 .v-popper__popper[data-popper-placement^=right] .v-popper__arrow-outer {
-	left: -6px;
+	left: -11px;
 }
 
 .v-popper__popper[data-popper-placement^=left] .v-popper__arrow-container {

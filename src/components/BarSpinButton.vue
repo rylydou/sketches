@@ -73,5 +73,7 @@ function touchmove(e: TouchEvent) {
 </template>
 
 <style scoped>
-
+.value {
+	font-size: 24px;
+}
 </style>
