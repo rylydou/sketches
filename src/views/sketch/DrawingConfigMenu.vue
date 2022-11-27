@@ -18,18 +18,9 @@ function change() {
 <template>
 	<div class="menu">
 
-		<div class="section">
-			<div class="header">Touch calibration</div>
-			<div class="content">
-				<div class="radio-group h-group fill">
-					<div v-for="mode in TouchCalibrationMode" class="radio"
-						:active="computed(() => local.drawingConfig.touchCalibrationMode == mode).value"
-						@click="local.drawingConfig.touchCalibrationMode = mode">
-						<EditIcon />
-						{{ mode }}
-					</div>
-				</div>
-			</div>
+		<div class="h-group fill">
+			<div class="btn">Reset...</div>
+			<div class="btn">More settings ➙</div>
 		</div>
 
 		<div class="section">
@@ -53,7 +44,19 @@ function change() {
 			</div>
 		</div>
 
-		<!-- <div class="btn framed" @click="hideAllPoppers()">Done</div> -->
+		<div class="section">
+			<div class="header">Touch calibration</div>
+			<div class="content">
+				<div class="radio-group h-group fill">
+					<div v-for="mode in TouchCalibrationMode" class="radio"
+						:active="computed(() => local.drawingConfig.touchCalibrationMode == mode).value"
+						@click="local.drawingConfig.touchCalibrationMode = mode">
+						<EditIcon />
+						{{ mode }}
+					</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 </template>

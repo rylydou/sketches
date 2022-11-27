@@ -1,10 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-* {
-	box-sizing: border-box;
-}
-
 body,
 :where(body :not(dialog, path, circle)) {
 	all: unset;
@@ -13,6 +9,11 @@ body,
 
 :where(dialog) {
 	border: unset;
+}
+
+* {
+	box-sizing: border-box;
+	touch-action: none;
 }
 
 body {

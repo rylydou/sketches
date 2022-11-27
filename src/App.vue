@@ -30,14 +30,13 @@ import EraserIcon from '@/components/icons/EraserIcon.vue'
 import SwapIconButton from './components/SwapIconButton.vue'
 import UpIcon from './components/icons/UpIcon.vue'
 import DownIcon from './components/icons/DownIcon.vue'
+import BugIcon from './components/icons/BugIcon.vue'
 
 var store = useSessionStore()
 
 function setSize(sizeFactor: number) {
 	store.brushConfig.sizeFactor = sizeFactor
 }
-
-var eraser = ref(false)
 
 function closePopoversWithDelay(delayMs: number) {
 	setTimeout(() => hideAllPoppers(), delayMs)
@@ -64,6 +63,10 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #end>
+				<BarItem style="background-color: #ff02; color: #ea0;">
+					<BugIcon />
+				</BarItem>
+
 				<Dropdown placement="left" :offset-distance="16">
 					<BarItem>
 						<TuneIcon />
@@ -85,7 +88,7 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #middle>
-				<SwapIconButton v-model="eraser">
+				<SwapIconButton v-model="store.brushConfig.eraserSelected">
 					<template #off>
 						<EditIcon />
 					</template>

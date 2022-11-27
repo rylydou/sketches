@@ -6,7 +6,7 @@ export const useSessionStore = defineStore('session', () => {
 	var brushConfig = reactive({
 		sizeFactor: 1,
 		color: '#000000',
-
+		eraserSelected: false,
 	})
 
 	var brushSizePx = computed(() => Math.pow(2.0, brushConfig.sizeFactor))

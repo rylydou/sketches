@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import { useSessionStore } from '@/store'
-import { getDistanceSqr } from '@/util'
+import { useLocalStore, useSessionStore } from '@/store'
+import { getDistance, getDistanceSqr } from '@/util'
+import { hideAllPoppers } from 'floating-vue'
 
-var store = useSessionStore()
+var sessionStore = useSessionStore()
+var localStore = useLocalStore()
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
@@ -59,6 +61,8 @@ function loaded() {
 }
 
 function touchstart(clientX: number, clientY: number) {
+	hideAllPoppers()
+
 	distanceSqr = 0.0
 
 	let x = transClientX(clientX)
@@ -80,13 +84,19 @@ function touchmove(clientX: number, clientY: number) {
 	let x = transClientX(clientX)
 	let y = transClientY(clientY)
 
-	let isNearLast = getDistanceSqr(last_x, last_y, x, y) <= 5 * 5
-	let isNearStart = getDistanceSqr(start_x, start_y, x, y) <= 16 * 16
+	let isNearLast = getDistance(last_x, last_y, x, y) <= localStore.drawingConfig.smoothing
+	let isNearStart = getDistance(start_x, start_y, x, y) <= localStore.drawingConfig.shapeClosingDistance
 
 	ctx.putImageData(imageData, 0, 0)
 
-	ctx.lineWidth = store.brushSizePx
-	ctx.strokeStyle = store.brushConfig.color
+	ctx.lineWidth = sessionStore.brushSizePx
+	ctx.strokeStyle = sessionStore.brushConfig.color
+	if (sessionStore.brushConfig.eraserSelected) {
+		ctx.globalCompositeOperation = 'destination-out'
+	}
+	else {
+		ctx.globalCompositeOperation = 'source-over'
+	}
 	ctx.lineCap = 'round'
 	ctx.lineJoin = 'round'
 	if (isNearLast)
@@ -128,16 +138,43 @@ function touchmove(clientX: number, clientY: number) {
 		last_x = x
 		last_y = y
 	}
+
+	ctx.save()
+
+	if (sessionStore.brushConfig.eraserSelected) {
+		ctx.beginPath()
+		ctx.lineWidth = 8
+		ctx.strokeStyle = 'white'
+		ctx.globalCompositeOperation = 'difference'
+		ctx.arc(x, y, sessionStore.brushSizePx / 2 + 6, 0, 2 * Math.PI)
+		ctx.stroke()
+	}
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'white'
+	ctx.globalCompositeOperation = 'source-over'
+	ctx.arc(x, y, sessionStore.brushSizePx / 2 + 2, 0, 2 * Math.PI)
+	ctx.stroke()
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'black'
+	ctx.globalCompositeOperation = 'source-over'
+	ctx.arc(x, y, sessionStore.brushSizePx / 2, 0, 2 * Math.PI)
+	ctx.stroke()
+
+	ctx.restore()
 }
 
 function touchend() {
 	ctx.putImageData(imageData, 0, 0)
 
-	let isNearStart = getDistanceSqr(start_x, start_y, last_x, last_y) <= 16.0 * 16.0
+	let isNearStart = getDistance(start_x, start_y, last_x, last_y) <= localStore.drawingConfig.shapeClosingDistance
 
 	if (distanceSqr <= 1.0) {
-		ctx.fillStyle = store.brushConfig.color
-		let size = store.brushSizePx / 2.0
+		ctx.fillStyle = sessionStore.brushConfig.color
+		let size = sessionStore.brushSizePx / 2.0
 		ctx.beginPath()
 		ctx.arc(last_x, last_y, size, 0, Math.PI * 2)
 		ctx.fill()
