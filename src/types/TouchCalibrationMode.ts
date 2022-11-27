@@ -1,4 +1,4 @@
-export const enum TouchCalibrationMode {
-	Stylus = 'stylus',
-	Finger = 'finger',
+export enum TouchCalibrationMode {
+	Stylus = 'Stylus',
+	Finger = 'Finger',
 }

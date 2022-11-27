@@ -27,11 +27,20 @@ import RedoIcon from '@/components/icons/RedoIcon.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import ColorIcon from '@/components/icons/ColorIcon.vue'
 import EraserIcon from '@/components/icons/EraserIcon.vue'
+import SwapIconButton from './components/SwapIconButton.vue'
+import UpIcon from './components/icons/UpIcon.vue'
+import DownIcon from './components/icons/DownIcon.vue'
 
 var store = useSessionStore()
 
 function setSize(sizeFactor: number) {
 	store.brushConfig.sizeFactor = sizeFactor
+}
+
+var eraser = ref(false)
+
+function closePopoversWithDelay(delayMs: number) {
+	setTimeout(() => hideAllPoppers(), delayMs)
 }
 
 </script>
@@ -55,7 +64,7 @@ function setSize(sizeFactor: number) {
 			</template>
 
 			<template #end>
-				<Dropdown placement="right" :offset-distance="16">
+				<Dropdown placement="left" :offset-distance="16">
 					<BarItem>
 						<TuneIcon />
 					</BarItem>
@@ -76,11 +85,23 @@ function setSize(sizeFactor: number) {
 			</template>
 
 			<template #middle>
-				<BarItem>
-					<EditIcon />
-				</BarItem>
+				<SwapIconButton v-model="eraser">
+					<template #off>
+						<EditIcon />
+					</template>
+					<template #on>
+						<EraserIcon />
+					</template>
+				</SwapIconButton>
 
-				<BarSpinButton @change="setSize" :min="0" :max="9" />
+				<BarSpinButton @change="setSize" :min="0" :max="9">
+					<template #inc>
+						<UpIcon />
+					</template>
+					<template #dec>
+						<DownIcon />
+					</template>
+				</BarSpinButton>
 
 				<Dropdown placement="left" :offset-distance="16">
 					<BarItem class="solid"
@@ -89,7 +110,7 @@ function setSize(sizeFactor: number) {
 					</BarItem>
 
 					<template #popper>
-						<ColorPalette @picked="hideAllPoppers()" />
+						<ColorPalette @picked="closePopoversWithDelay(200)" />
 					</template>
 				</Dropdown>
 			</template>}
@@ -111,8 +132,6 @@ function setSize(sizeFactor: number) {
 
 <style scoped>
 .app {
-	/* filter: invert(100%); */
-
 	display: flex;
 	flex-direction: row;
 	width: 100vw;

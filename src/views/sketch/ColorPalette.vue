@@ -35,23 +35,39 @@ var emits = defineEmits<{
 	position: relative;
 
 	width: 48px;
-	height: 52px;
+	height: 48px;
 	border-radius: 12px;
 
 	background-color: currentColor;
+	box-shadow: inset 0 0 0 48px hsl(0 0% 0% / 0.5);
 
-	box-shadow:
-		inset 0 -4px 0 0 hsl(0 0% 0% / 0.5),
-		inset 0 0px 0 0 white;
-
-	transition: box-shadow 200ms ease-out;
+	transition: translate 200ms ease-out;
 }
 
 .swatch.active {
 	cursor: default;
-	box-shadow:
-		inset 0 0px 0 0 hsl(0 0% 0% / 0.5),
-		inset 0 4px 0 0 white;
+	pointer-events: none;
+}
+
+.swatch::before {
+	content: '';
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+
+	border-radius: inherit;
+	background-color: currentColor;
+
+	translate: 0 -4px;
+
+	transition: translate 200ms ease-out;
+}
+
+.swatch.active::before {
+	translate: 0 0px;
+
+	transition: translate 200ms ease-out;
 }
 
 .swatch::after {
@@ -82,7 +98,7 @@ var emits = defineEmits<{
 .swatch.active::after {
 	opacity: 1;
 	scale: 1;
-	translate: -50% calc(-50% + 2px);
+	translate: -50% -50%;
 
 	transition: opacity 300ms, scale 300ms cubic-bezier(0.34, 1.56, 0.64, 1), translate 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }

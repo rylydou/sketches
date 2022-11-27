@@ -1,29 +1,60 @@
 <script lang="ts" setup>
 import BarItem from '@/components/BarItem.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
+import { useLocalStore } from '@/store'
 
+import { TouchCalibrationMode } from '@/types'
+import { hideAllPoppers } from 'floating-vue'
+import { computed, ref } from 'vue'
+
+var local = useLocalStore()
+
+function change() {
+	console.log(local.drawingConfig.smoothing)
+}
 
 </script>
 
 <template>
 	<div class="menu">
+
 		<div class="section">
-			<div class="header">
-				Touch calibration
-			</div>
+			<div class="header">Touch calibration</div>
 			<div class="content">
-				<div class="h-group">
-					<BarItem>
+				<div class="radio-group h-group fill">
+					<div v-for="mode in TouchCalibrationMode" class="radio"
+						:active="computed(() => local.drawingConfig.touchCalibrationMode == mode).value"
+						@click="local.drawingConfig.touchCalibrationMode = mode">
 						<EditIcon />
-						Stylus
-					</BarItem>
-					<BarItem>
-						<EditIcon />
-						Finger
-					</BarItem>
+						{{ mode }}
+					</div>
 				</div>
 			</div>
 		</div>
+
+		<div class="section">
+			<div class="header">Smoothing amount</div>
+			<div class="content">
+				<div style="font-size: 18px; width: 32px;">{{
+						local.drawingConfig.smoothing
+				}}</div>
+				<input type="range" v-model="local.drawingConfig.smoothing" min="0" max="90" step="10">
+			</div>
+		</div>
+
+		<div class="section">
+			<div class="header">Shape Closing</div>
+			<div class="content">
+				<div style="font-size: 18px; width: 32px;">{{
+						local.drawingConfig.shapeClosingDistance
+				}}</div>
+				<input type="range" v-model="local.drawingConfig.shapeClosingDistance" min="0" max="90"
+					step="10">
+			</div>
+		</div>
+
+		<!-- <div class="btn framed" @click="hideAllPoppers()">Done</div> -->
+
 	</div>
 </template>
 
@@ -34,7 +65,6 @@ import EditIcon from '@/components/icons/EditIcon.vue'
 	padding: 12px;
 	gap: 16px;
 	width: 400px;
-	height: 500px;
 }
 
 .section {
@@ -47,9 +77,11 @@ import EditIcon from '@/components/icons/EditIcon.vue'
 	>.header {
 		display: flex;
 		flex-direction: row;
-		// justify-content: center;
+		justify-content: center;
+		align-items: center;
 		font-size: 16px;
 		line-height: 24px;
+		padding-bottom: 8px;
 	}
 
 	>.content {
