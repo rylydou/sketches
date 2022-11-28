@@ -7,29 +7,25 @@ import { TouchCalibrationMode } from '@/types'
 import { hideAllPoppers } from 'floating-vue'
 import { computed, ref } from 'vue'
 
-var local = useLocalStore()
-
-function change() {
-	console.log(local.drawingConfig.smoothing)
-}
+var localStore = useLocalStore()
 
 </script>
 
 <template>
 	<div class="menu">
 
-		<div class="h-group fill">
+		<!-- <div class="h-group fill">
 			<div class="btn">Reset...</div>
 			<div class="btn">More settings ➙</div>
-		</div>
+		</div> -->
 
 		<div class="section">
 			<div class="header">Smoothing amount</div>
 			<div class="content">
 				<div style="font-size: 18px; width: 32px;">{{
-						local.drawingConfig.smoothing
+						localStore.drawingConfig.smoothing
 				}}</div>
-				<input type="range" v-model="local.drawingConfig.smoothing" min="0" max="90" step="10">
+				<input type="range" v-model="localStore.drawingConfig.smoothing" min="0" max="90" step="10">
 			</div>
 		</div>
 
@@ -37,9 +33,9 @@ function change() {
 			<div class="header">Shape Closing</div>
 			<div class="content">
 				<div style="font-size: 18px; width: 32px;">{{
-						local.drawingConfig.shapeClosingDistance
+						localStore.drawingConfig.shapeClosingDistance
 				}}</div>
-				<input type="range" v-model="local.drawingConfig.shapeClosingDistance" min="0" max="90"
+				<input type="range" v-model="localStore.drawingConfig.shapeClosingDistance" min="0" max="90"
 					step="10">
 			</div>
 		</div>
@@ -49,8 +45,8 @@ function change() {
 			<div class="content">
 				<div class="radio-group h-group fill">
 					<div v-for="mode in TouchCalibrationMode" class="radio"
-						:active="computed(() => local.drawingConfig.touchCalibrationMode == mode).value"
-						@click="local.drawingConfig.touchCalibrationMode = mode">
+						:active="computed(() => localStore.drawingConfig.touchCalibrationMode == mode).value"
+						@click="localStore.drawingConfig.touchCalibrationMode = mode">
 						<EditIcon />
 						{{ mode }}
 					</div>

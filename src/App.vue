@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
+import { Dropdown, hideAllPoppers, } from 'floating-vue'
 
 import { getContrastColor } from '@/util'
 import { useSessionStore } from '@/store'
@@ -11,8 +12,6 @@ import BarSpinButton from '@/components/BarSpinButton.vue'
 import Canvas from '@/views/sketch/Canvas.vue'
 import ColorPalette from '@/views/sketch/ColorPalette.vue'
 import DrawingConfigMenu from '@/views/sketch/DrawingConfigMenu.vue'
-
-import { Dropdown, hideAllPoppers, } from 'floating-vue'
 
 import HomeIcon from '@/components/icons/HomeIcon.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
@@ -31,11 +30,12 @@ import SwapIconButton from './components/SwapIconButton.vue'
 import UpIcon from './components/icons/UpIcon.vue'
 import DownIcon from './components/icons/DownIcon.vue'
 import BugIcon from './components/icons/BugIcon.vue'
+import LayersMenu from './views/sketch/LayersMenu.vue'
 
-var store = useSessionStore()
+var sessionStore = useSessionStore()
 
 function setSize(sizeFactor: number) {
-	store.brushConfig.sizeFactor = sizeFactor
+	sessionStore.brushConfig.sizeFactor = sizeFactor
 }
 
 function closePopoversWithDelay(delayMs: number) {
@@ -57,9 +57,14 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #middle>
-				<BarItem>
-					<LayersIcon />
-				</BarItem>
+				<Dropdown placement="left" :offset-distance="16">
+					<BarItem>
+						<LayersIcon />
+					</BarItem>
+					<template #popper>
+						<LayersMenu />
+					</template>
+				</Dropdown>
 			</template>
 
 			<template #end>
@@ -88,7 +93,7 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #middle>
-				<SwapIconButton v-model="store.brushConfig.eraserSelected">
+				<SwapIconButton v-model="sessionStore.brushConfig.eraserSelected">
 					<template #off>
 						<EditIcon />
 					</template>
@@ -108,7 +113,7 @@ function closePopoversWithDelay(delayMs: number) {
 
 				<Dropdown placement="left" :offset-distance="16">
 					<BarItem class="solid"
-						:style="{ backgroundColor: store.brushConfig.color, color: getContrastColor(store.brushConfig.color, true), }">
+						:style="{ backgroundColor: sessionStore.brushConfig.color, color: getContrastColor(sessionStore.brushConfig.color, true), }">
 						<ColorIcon style="" />
 					</BarItem>
 

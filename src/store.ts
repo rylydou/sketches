@@ -1,6 +1,8 @@
 import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { TouchCalibrationMode } from './types'
+
+import { TouchCalibrationMode } from '@/types'
+import { Sketch } from '@/models/Sketch'
 
 export const useSessionStore = defineStore('session', () => {
 	var brushConfig = reactive({
@@ -39,4 +41,11 @@ export const useLocalStore = defineStore('local', () => {
 		fingerCalibration,
 		stylusCalibration,
 	}
+})
+
+export const useSketchStore = defineStore('sketch', () => {
+	let dpi = 150
+	let sketch = new Sketch(11 * dpi, 8.5 * dpi)
+
+	return sketch
 })

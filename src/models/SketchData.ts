@@ -1,4 +1,4 @@
-import LayerData from './LayerData'
+import LayerData from '@/models/LayerData'
 
 export default class SketchData {
 	public width: number

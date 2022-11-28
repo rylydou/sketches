@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { hideAllPoppers } from 'floating-vue'
 
 import { useLocalStore, useSessionStore } from '@/store'
 import { getDistance, getDistanceSqr } from '@/util'
-import { hideAllPoppers } from 'floating-vue'
 
 var sessionStore = useSessionStore()
 var localStore = useLocalStore()
@@ -12,7 +12,6 @@ let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
 let imageData: ImageData
 let ctx: CanvasRenderingContext2D
-let offscreen: OffscreenCanvas
 
 let start_x = NaN
 let start_y = NaN
@@ -28,8 +27,6 @@ let distanceSqr = NaN
 let drawPath: Path2D
 
 onMounted(() => {
-	// offscreen = new OffscreenCanvas()
-
 	window.onkeydown = (ev) => {
 		if (ev.key == 'r')
 			clear()
@@ -44,7 +41,6 @@ onMounted(() => {
 })
 
 function loaded() {
-	console.log('load')
 	if (ref_canvas.value == null) {
 		console.error('error getting canvas')
 		return
