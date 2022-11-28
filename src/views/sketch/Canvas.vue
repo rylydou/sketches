@@ -87,14 +87,8 @@ function touchmove(clientX: number, clientY: number) {
 
 	ctx.lineWidth = sessionStore.brushSizePx
 	ctx.strokeStyle = sessionStore.brushConfig.color
-	if (sessionStore.brushConfig.eraserSelected) {
-		ctx.globalCompositeOperation = 'destination-out'
-	}
-	else {
-		ctx.globalCompositeOperation = 'source-over'
-	}
-	ctx.lineCap = 'round'
-	ctx.lineJoin = 'round'
+	ctx.globalCompositeOperation = sessionStore.brushConfig.eraserSelected ? 'destination-out' : 'source-over'
+
 	if (isNearLast)
 		ctx.stroke(drawPath)
 
@@ -186,6 +180,14 @@ function touchend() {
 	}
 
 	ctx.stroke(drawPath)
+
+	let x = sessionStore.sketch.layers[0].ctx
+	x.lineCap = 'round'
+	x.lineJoin = 'round'
+	x.lineWidth = sessionStore.brushSizePx
+	x.strokeStyle = sessionStore.brushConfig.color
+	x.globalCompositeOperation = sessionStore.brushConfig.eraserSelected ? 'destination-out' : 'source-over'
+	x.stroke(drawPath)
 }
 
 function clear() {

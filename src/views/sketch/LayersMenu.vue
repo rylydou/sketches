@@ -5,19 +5,23 @@ import { computed, onMounted, ref } from 'vue'
 
 import BarItem from '@/components/BarItem.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
-import { useLocalStore, useSketchStore } from '@/store'
+import { useSessionStore, useLocalStore } from '@/store'
 
 import LayersMenuLayer from './LayersMenuLayer.vue'
+import { SketchLayer } from '@/models/Sketch'
 
 var localStore = useLocalStore()
-var sketchStore = useSketchStore()
-
-
+var sessionStore = useSessionStore()
 </script>
 
 <template>
 	<div class="menu">
-		<LayersMenuLayer v-for="layer in sketchStore.layers" :value="layer" />
+		<div class="layers-list">
+			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :value="layer" />
+		</div>
+		<div class="btn" @click="sessionStore.sketch.addLayer()">
+			Add layer
+		</div>
 	</div>
 </template>
 
@@ -25,22 +29,18 @@ var sketchStore = useSketchStore()
 .menu {
 	display: flex;
 	flex-direction: column;
+
+	gap: 12px;
+
 	padding: 12px;
-	gap: 16px;
-	width: 400px;
+	min-width: 400px;
 }
 
-.layer {
+.layers-list {
 	display: flex;
-	flex-direction: row;
-}
+	flex-direction: column;
 
-.preview {
-	aspect-ratio: 11 / 8.5;
-	width: 64px;
-	height: 64px;
-
-	border: solid 2px hsl(0 0% 90% / 1.0);
-	border-radius: 12px;
+	max-height: 400px;
+	overflow-y: scroll;
 }
 </style>

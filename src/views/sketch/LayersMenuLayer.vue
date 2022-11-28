@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 
 import type { SketchLayer } from '@/models/Sketch'
+import { useSessionStore } from '@/store'
+let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
 
@@ -16,12 +18,6 @@ onMounted(() => {
 function updateThumbnail() {
 	console.log('updating thumbnail for ' + props.value.name)
 
-	let x = props.value.ctx
-	x.lineWidth = 16
-	x.beginPath()
-	x.arc(200, 200, 300, 0, Math.PI * 1.5)
-	x.stroke()
-
 	let ctx = ref_thumbnail.value!.getContext('2d')!
 	ctx.scale(1, 1)
 	ctx.clearRect(0, 0, ref_thumbnail.value!.width, props.value.canvas.height)
@@ -33,12 +29,48 @@ function updateThumbnail() {
 </script>
 
 <template>
-	<div class="layer" @mouseenter="updateThumbnail()">
-		<canvas width="110" height="85" ref="ref_thumbnail" />
-		{{ value.name }}
+	<div class="layer" @click="sessionStore.currentLayer = props.value"
+		:active="sessionStore.currentLayer == props.value">
+		<canvas ref="ref_thumbnail" class="thumbnail" width="110" height="85" />
+		<div class="info">
+			<div class="name">{{ value.name }}</div>
+		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.layer {}
+.layer {
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+	padding: 6px;
+	border-radius: 12px;
+
+	&[active="true"] {
+		.name::after {
+			content: '🡐';
+			padding-left: 4px;
+		}
+
+		// background-color: hsl(200 100% 95% / 1.0);
+	}
+}
+
+.thumbnail {
+	image-rendering: optimizeQuality;
+	border-radius: 6px;
+	border: solid 2px hsl(0% 0% 90% / 1.0);
+}
+
+.info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.name {
+	font-size: 20px;
+	line-height: 24px;
+	font-weight: bold;
+}
 </style>

@@ -1,4 +1,4 @@
-export class vec2 {
+export default class vec2 {
 	get x(): number {
 		return this.values[0]
 	}

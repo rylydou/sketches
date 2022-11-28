@@ -1,8 +1,8 @@
 import { computed } from 'vue'
 
 export class Sketch {
-	public width: number
-	public height: number
+	public readonly width: number
+	public readonly height: number
 
 	public layers: SketchLayer[] = []
 
@@ -23,12 +23,12 @@ export class Sketch {
 }
 
 export class SketchLayer {
-	public sketch: Sketch
+	public readonly sketch: Sketch
 
 	public name: string
 
-	public canvas: OffscreenCanvas
-	public ctx: OffscreenCanvasRenderingContext2D
+	public readonly canvas: OffscreenCanvas
+	public readonly ctx: OffscreenCanvasRenderingContext2D
 
 	constructor(sketch: Sketch) {
 		this.name = `Layer ${sketch.layers.length + 1}`
