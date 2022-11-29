@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Button from '@/components/Button.vue'
 import AddLayerIcon from '@/components/icons/AddLayerIcon.vue'
 import LayersMenuLayer from './LayersMenuLayer.vue'
 
@@ -10,11 +11,12 @@ var sessionStore = useSessionStore()
 
 <template>
 	<div class="menu">
-		<div class="btn" @click="sessionStore.currentLayer = sessionStore.sketch.addLayer()">
+		<Button @press="sessionStore.currentLayer = sessionStore.sketch.addLayer()">
 			<AddLayerIcon /> Add layer
-		</div>
+		</Button>
 		<div class="layers-list">
-			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :value="layer" />
+			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :key="layer.name"
+				:value="layer" />
 		</div>
 	</div>
 </template>

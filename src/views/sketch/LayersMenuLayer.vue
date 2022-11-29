@@ -4,6 +4,9 @@ import { computed, onMounted, ref } from 'vue'
 import type { SketchLayer } from '@/models/Sketch'
 import { useSessionStore } from '@/store'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
+import Button from '@/components/Button.vue'
+import SwapIconButton from '@/components/SwapIconButton.vue'
+import { Dropdown } from 'floating-vue'
 let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
@@ -30,15 +33,26 @@ function updateThumbnail() {
 </script>
 
 <template>
-	<div class="layer" @click="sessionStore.currentLayer = props.value"
-		:active="sessionStore.currentLayer == props.value">
-		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128" />
+	<div class="layer" :active="sessionStore.currentLayer == props.value">
+		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128"
+			@click="sessionStore.currentLayer = props.value" />
 		<div class="info">
 			<div class="name">{{ value.name }}</div>
-		</div>
-		<div class="buttons">
-			<div class="btn" @click="sessionStore.sketch.removeLayer(props.value)">
-				<TrashIcon />
+			<div class="buttons">
+				<SwapIconButton v-model="props.value.isHidden">
+				</SwapIconButton>
+				<div class="grow"></div>
+				<Dropdown>
+					<Button>
+						<TrashIcon />
+					</Button>
+
+					<template #popper>
+						<Button class="danger" @press="sessionStore.sketch.removeLayer(props.value)">
+							<TrashIcon /> Delete
+						</Button>
+					</template>
+				</Dropdown>
 			</div>
 		</div>
 	</div>
@@ -66,19 +80,19 @@ function updateThumbnail() {
 
 .buttons {
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	flex-direction: row;
 }
 
 .thumbnail {
 	cursor: pointer;
 	image-rendering: optimizeQuality;
 	border-radius: 6px;
-	border: solid 2px hsl(0% 0% 90% / 1.0);
+	border: solid 2px hsl(0 0% 90% / 1.0);
 }
 
 .info {
 	flex-grow: 1;
+
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -87,6 +101,12 @@ function updateThumbnail() {
 .name {
 	font-size: 20px;
 	line-height: 24px;
+	padding: 12px;
 	font-weight: bold;
+}
+
+.delete-conf {
+	display: flex;
+	padding: 12px;
 }
 </style>

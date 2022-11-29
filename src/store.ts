@@ -14,7 +14,7 @@ export const useSessionStore = defineStore('session', () => {
 	let brushSizePx = computed(() => Math.pow(2.0, brushConfig.sizeFactor))
 
 	let dpi = 150
-	let sketch = new Sketch(11 * dpi, 8.5 * dpi)
+	let sketch = reactive(new Sketch(11 * dpi, 8.5 * dpi))
 	let currentLayer = ref(sketch.layers[0])
 
 	return {

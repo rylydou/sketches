@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import BarItem from '@/components/BarItem.vue'
 import EditIcon from '@/components/icons/EditIcon.vue'
 import { useLocalStore } from '@/store'
 
 import { TouchCalibrationMode } from '@/types'
-import { hideAllPoppers } from 'floating-vue'
 import { computed, ref } from 'vue'
 
 var localStore = useLocalStore()

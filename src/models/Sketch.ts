@@ -1,12 +1,8 @@
-import { computed } from 'vue'
-
 export class Sketch {
 	public readonly width: number
 	public readonly height: number
 
 	public layers: SketchLayer[] = []
-
-	// public currentLayer?: SketchLayer
 
 	constructor(width: number, height: number) {
 		this.width = width
@@ -30,6 +26,7 @@ export class SketchLayer {
 	public readonly sketch: Sketch
 
 	public name: string
+	public isHidden = false
 
 	public readonly canvas: OffscreenCanvas
 	public readonly ctx: OffscreenCanvasRenderingContext2D

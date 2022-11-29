@@ -7,7 +7,7 @@ import { getContrastColor } from '@/util'
 import { useSessionStore } from '@/store'
 
 import Bar from '@/components/Bar.vue'
-import BarItem from '@/components/BarItem.vue'
+import Button from '@/components/Button.vue'
 import BarSpinButton from '@/components/BarSpinButton.vue'
 import Canvas from '@/views/sketch/Canvas.vue'
 import ColorPalette from '@/views/sketch/ColorPalette.vue'
@@ -34,10 +34,6 @@ import LayersMenu from './views/sketch/LayersMenu.vue'
 
 var sessionStore = useSessionStore()
 
-function setSize(sizeFactor: number) {
-	sessionStore.brushConfig.sizeFactor = sizeFactor
-}
-
 function closePopoversWithDelay(delayMs: number) {
 	setTimeout(() => hideAllPoppers(), delayMs)
 }
@@ -48,19 +44,19 @@ function closePopoversWithDelay(delayMs: number) {
 	<div class="app">
 		<Bar>
 			<template #start>
-				<BarItem>
+				<Button>
 					<HomeIcon />
-				</BarItem>
-				<BarItem>
+				</Button>
+				<Button>
 					<InventoryIcon />
-				</BarItem>
+				</Button>
 			</template>
 
 			<template #middle>
 				<Dropdown placement="left" :offset-distance="16">
-					<BarItem>
+					<Button>
 						<LayersIcon />
-					</BarItem>
+					</Button>
 					<template #popper>
 						<LayersMenu />
 					</template>
@@ -68,14 +64,14 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #end>
-				<BarItem style="background-color: #ff02; color: #ea0;">
+				<Button style="background-color: #ff02; color: #ea0;">
 					<BugIcon />
-				</BarItem>
+				</Button>
 
 				<Dropdown placement="left" :offset-distance="16">
-					<BarItem>
+					<Button>
 						<TuneIcon />
-					</BarItem>
+					</Button>
 
 					<template #popper>
 						<DrawingConfigMenu />
@@ -102,7 +98,7 @@ function closePopoversWithDelay(delayMs: number) {
 					</template>
 				</SwapIconButton>
 
-				<BarSpinButton @change="setSize" :min="0" :max="9">
+				<BarSpinButton v-model="sessionStore.brushConfig.sizeFactor" :min="0" :max="9">
 					<template #inc>
 						<UpIcon />
 					</template>
@@ -112,10 +108,10 @@ function closePopoversWithDelay(delayMs: number) {
 				</BarSpinButton>
 
 				<Dropdown placement="left" :offset-distance="16">
-					<BarItem class="solid"
+					<Button class="solid"
 						:style="{ backgroundColor: sessionStore.brushConfig.color, color: getContrastColor(sessionStore.brushConfig.color, true), }">
 						<ColorIcon style="" />
-					</BarItem>
+					</Button>
 
 					<template #popper>
 						<ColorPalette @picked="closePopoversWithDelay(200)" />
@@ -125,12 +121,12 @@ function closePopoversWithDelay(delayMs: number) {
 
 			<template #end>
 				<div class="v-group">
-					<BarItem>
+					<Button>
 						<UndoIcon />
-					</BarItem>
-					<BarItem>
+					</Button>
+					<Button>
 						<RedoIcon />
-					</BarItem>
+					</Button>
 				</div>
 			</template>
 		</Bar>

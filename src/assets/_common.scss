@@ -3,6 +3,10 @@
 	border: solid 2px black;
 }
 
+.grow {
+	flex-grow: 1;
+}
+
 .btn {
 	cursor: pointer;
 
@@ -17,8 +21,6 @@
 	border-radius: 12px;
 
 	font-weight: bold;
-	outline: solid 2px transparent;
-	transition: outline-color 1000ms;
 
 	transition: background-color 1000ms;
 
@@ -30,6 +32,11 @@
 	&.solid {
 		transition: background-color 200ms, color 200ms;
 	}
+}
+
+.danger {
+	background-color: #ff595e;
+	color: white;
 }
 
 .radio-group {

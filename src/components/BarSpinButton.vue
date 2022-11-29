@@ -3,38 +3,45 @@ import PlusIcon from './../components/icons/PlusIcon.vue'
 import MinusIcon from './../components/icons/MinusIcon.vue'
 
 import { ref } from '@vue/reactivity'
+import { computed } from 'vue'
 
-var ref_value = ref<HTMLDivElement>()
+var props = defineProps<{
+	modelValue: number,
 
-var value = ref(1)
-
-const props = defineProps<{
 	max?: number,
 	min?: number,
+	step?: number,
 }>()
 
-const emits = defineEmits<{
-	(e: 'change', val: number): void
+var { max, min, step } = props
+
+var emits = defineEmits<{
+	(e: 'update:modelValue', value: number): void,
 }>()
+
+const value = computed({
+	get() {
+		return props.modelValue
+	},
+	set(value: number) {
+		emits('update:modelValue', value)
+	}
+})
+
+function clamp(value: number) {
+	value = Math.min(value, max ?? Infinity)
+	value = Math.max(value, min ?? -Infinity)
+	return value
+}
 
 function inc() {
-	if (value.value >= orDefault(props.max, Infinity)) return
-
-	value.value++
-	emits('change', value.value)
+	if (value.value >= (max ?? Infinity)) return
+	value.value = clamp(value.value + (props.step ?? 1))
 }
 
 function dec() {
-	if (value.value <= orDefault(props.min, -Infinity)) return
-
-	value.value--
-	emits('change', value.value)
-}
-
-function orDefault(value: any | undefined, def: any): any {
-	if (value == undefined)
-		return def
-	return value
+	if (value.value <= (min ?? -Infinity)) return
+	value.value = clamp(value.value - (props.step ?? 1))
 }
 
 var startY = NaN
@@ -47,8 +54,7 @@ function touchstart(e: TouchEvent) {
 function touchmove(e: TouchEvent) {
 	let v = startValue + (startY - e.touches.item(0)!.clientY) / 200.0
 	v = Math.round(v * 10.0) / 10.0
-	value.value = Math.min(Math.max(v, orDefault(props.min, -Infinity)), orDefault(props.max, Infinity))
-	emits('change', value.value)
+	value.value = clamp(v)
 }
 </script>
 
