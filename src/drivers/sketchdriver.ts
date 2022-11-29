@@ -10,11 +10,14 @@ export class SketchDriver {
 		this.sketch = sketch
 	}
 
-	private baseImage: ImageData = null! // dude trust me
-	private points: vec2[] = null! // dude trust me
-	private path: Path2D = null! // dude trust me
+	private startedDrawing = false
+	private baseImage: ImageData = null!
+	private points: vec2[] = null!
+	private path: Path2D = null!
 
 	public touchStart(x: number, y: number) {
+		this.startedDrawing = true
+
 		this.baseImage = this.sketch.currentLayer!.ctx.getImageData(0, 0, this.sketch.width, this.sketch.height)
 		// start new path
 		// this.points = []

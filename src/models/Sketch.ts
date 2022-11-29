@@ -6,7 +6,7 @@ export class Sketch {
 
 	public layers: SketchLayer[] = []
 
-	public currentLayer?: SketchLayer
+	// public currentLayer?: SketchLayer
 
 	constructor(width: number, height: number) {
 		this.width = width
@@ -17,8 +17,12 @@ export class Sketch {
 
 	public addLayer(): SketchLayer {
 		let layer = new SketchLayer(this)
-		this.layers.push(layer)
+		this.layers.unshift(layer)
 		return layer
+	}
+
+	public removeLayer(layer: SketchLayer) {
+		this.layers.splice(this.layers.indexOf(layer), 1)
 	}
 }
 

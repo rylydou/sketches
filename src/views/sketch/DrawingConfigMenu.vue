@@ -25,12 +25,12 @@ var localStore = useLocalStore()
 				<div style="font-size: 18px; width: 32px;">{{
 						localStore.drawingConfig.smoothing
 				}}</div>
-				<input type="range" v-model="localStore.drawingConfig.smoothing" min="0" max="90" step="10">
+				<input type="range" v-model="localStore.drawingConfig.smoothing" min="0" max="90" step="5">
 			</div>
 		</div>
 
 		<div class="section">
-			<div class="header">Shape Closing</div>
+			<div class="header">Closing distance</div>
 			<div class="content">
 				<div style="font-size: 18px; width: 32px;">{{
 						localStore.drawingConfig.shapeClosingDistance

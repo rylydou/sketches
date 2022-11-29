@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 
 import type { SketchLayer } from '@/models/Sketch'
 import { useSessionStore } from '@/store'
+import TrashIcon from '@/components/icons/TrashIcon.vue'
 let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
@@ -31,9 +32,14 @@ function updateThumbnail() {
 <template>
 	<div class="layer" @click="sessionStore.currentLayer = props.value"
 		:active="sessionStore.currentLayer == props.value">
-		<canvas ref="ref_thumbnail" class="thumbnail" width="110" height="85" />
+		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128" />
 		<div class="info">
 			<div class="name">{{ value.name }}</div>
+		</div>
+		<div class="buttons">
+			<div class="btn" @click="sessionStore.sketch.removeLayer(props.value)">
+				<TrashIcon />
+			</div>
 		</div>
 	</div>
 </template>
@@ -45,24 +51,34 @@ function updateThumbnail() {
 	gap: 12px;
 	padding: 6px;
 	border-radius: 12px;
+	width: 400px;
 
 	&[active="true"] {
-		.name::after {
-			content: '🡐';
-			padding-left: 4px;
+		.thumbnail {
+			border-color: black;
 		}
 
-		// background-color: hsl(200 100% 95% / 1.0);
+		.name::after {
+			// content: ' 🡐';
+		}
 	}
 }
 
+.buttons {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
 .thumbnail {
+	cursor: pointer;
 	image-rendering: optimizeQuality;
 	border-radius: 6px;
 	border: solid 2px hsl(0% 0% 90% / 1.0);
 }
 
 .info {
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

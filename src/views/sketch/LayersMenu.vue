@@ -1,26 +1,20 @@
 <script lang="ts" setup>
-import { TouchCalibrationMode } from '@/types'
-import { hideAllPoppers } from 'floating-vue'
-import { computed, onMounted, ref } from 'vue'
-
-import BarItem from '@/components/BarItem.vue'
-import EditIcon from '@/components/icons/EditIcon.vue'
-import { useSessionStore, useLocalStore } from '@/store'
-
+import AddLayerIcon from '@/components/icons/AddLayerIcon.vue'
 import LayersMenuLayer from './LayersMenuLayer.vue'
+
+import { useSessionStore, useLocalStore } from '@/store'
 import { SketchLayer } from '@/models/Sketch'
 
-var localStore = useLocalStore()
 var sessionStore = useSessionStore()
 </script>
 
 <template>
 	<div class="menu">
+		<div class="btn" @click="sessionStore.currentLayer = sessionStore.sketch.addLayer()">
+			<AddLayerIcon /> Add layer
+		</div>
 		<div class="layers-list">
 			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :value="layer" />
-		</div>
-		<div class="btn" @click="sessionStore.sketch.addLayer()">
-			Add layer
 		</div>
 	</div>
 </template>
@@ -33,14 +27,15 @@ var sessionStore = useSessionStore()
 	gap: 12px;
 
 	padding: 12px;
-	min-width: 400px;
+	// min-width: 500px;
 }
 
 .layers-list {
 	display: flex;
 	flex-direction: column;
 
-	max-height: 400px;
+	// max-height: 600px;
+	max-height: 75vh;
 	overflow-y: scroll;
 }
 </style>
