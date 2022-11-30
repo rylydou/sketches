@@ -36,5 +36,9 @@ export class SketchLayer {
 		this.sketch = sketch
 		this.canvas = new OffscreenCanvas(sketch.width, sketch.height)
 		this.ctx = this.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
+		this.ctx.imageSmoothingEnabled = true
+		this.ctx.imageSmoothingQuality = 'high'
+		this.ctx.lineCap = 'round'
+		this.ctx.lineJoin = 'round'
 	}
 }

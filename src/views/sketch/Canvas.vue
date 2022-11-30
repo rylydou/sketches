@@ -4,15 +4,18 @@ import { hideAllPoppers } from 'floating-vue'
 
 import { useLocalStore, useSessionStore } from '@/store'
 import { getDistance, getDistanceSqr } from '@/util'
+import { SketchDriver } from '@/drivers/sketchdriver'
 
 var sessionStore = useSessionStore()
 var localStore = useLocalStore()
+
+let driver: SketchDriver
+let containsMouse = false
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
 let imageData: ImageData
 let ctx: CanvasRenderingContext2D
-
 let start_x = NaN
 let start_y = NaN
 
@@ -38,6 +41,9 @@ onMounted(() => {
 	canvas.width = 11.0 * dpi
 	canvas.height = 8.5 * dpi
 	console.log({ width: canvas.width, height: canvas.height })
+
+	driver = new SketchDriver(canvas)
+	driver.redraw()
 })
 
 function loaded() {
@@ -63,6 +69,10 @@ function touchstart(clientX: number, clientY: number) {
 
 	let x = transClientX(clientX)
 	let y = transClientY(clientY)
+
+	driver.touchStart(x, y)
+	return
+
 	last_x = x
 	last_y = y
 	start_x = x
@@ -79,6 +89,9 @@ function touchstart(clientX: number, clientY: number) {
 function touchmove(clientX: number, clientY: number) {
 	let x = transClientX(clientX)
 	let y = transClientY(clientY)
+
+	driver.touchMove(x, y)
+	return
 
 	let isNearLast = getDistance(last_x, last_y, x, y) <= localStore.drawingConfig.smoothing
 	let isNearStart = getDistance(start_x, start_y, x, y) <= localStore.drawingConfig.shapeClosingDistance
@@ -158,6 +171,9 @@ function touchmove(clientX: number, clientY: number) {
 }
 
 function touchend() {
+	driver.touchEnd()
+	return
+
 	ctx.putImageData(imageData, 0, 0)
 
 	let isNearStart = getDistance(start_x, start_y, last_x, last_y) <= localStore.drawingConfig.shapeClosingDistance
@@ -199,7 +215,30 @@ function transClientX(x: number): number {
 }
 
 function transClientY(y: number): number {
-	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height) - 18
+	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height)
+}
+
+let mouseX = 0.0
+let mouseY = 0.0
+let mouseDown = false
+function mousedown(e: MouseEvent) {
+
+	driver.touchStart(transClientX(mouseX), transClientY(mouseY))
+	mouseDown = true
+}
+
+function mouseup(e: MouseEvent) {
+	driver.touchEnd()
+	mouseDown = false
+}
+
+function mousemove(e: MouseEvent) {
+	mouseX = e.clientX
+	mouseY = e.clientY
+
+	if (mouseDown) {
+		driver.touchMove(transClientX(mouseX), transClientY(mouseY))
+	}
 }
 </script>
 
@@ -207,11 +246,13 @@ function transClientY(y: number): number {
 	<canvas ref="ref_canvas" class="canvas"
 		@touchstart="(e) => touchstart(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
 		@touchmove="(e) => touchmove(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
-		@touchend="touchend()" />
+		@touchend="touchend()" @mousedown="mousedown" @mouseup="mouseup" @mousemove="mousemove" />
 </template>
 
 <style scoped>
 .canvas {
+	cursor: crosshair;
+
 	aspect-ratio: 11 / 8.5;
 	/* max-width: 100%; */
 	/* max-height: 100%; */
