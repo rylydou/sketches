@@ -6,7 +6,7 @@ import { useSessionStore } from '@/store'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
 import Button from '@/components/Button.vue'
 import SwapIconButton from '@/components/SwapIconButton.vue'
-import { Dropdown } from 'floating-vue'
+import { Dropdown, hideAllPoppers } from 'floating-vue'
 let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
@@ -30,12 +30,16 @@ function updateThumbnail() {
 	ctx.drawImage(props.value.canvas, 0, 0)
 }
 
+function pickLayer() {
+	sessionStore.currentLayer = props.value
+	setTimeout(() => hideAllPoppers(), 200)
+}
+
 </script>
 
 <template>
 	<div class="layer" :active="sessionStore.currentLayer == props.value">
-		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128"
-			@click="sessionStore.currentLayer = props.value" />
+		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128" @click="pickLayer()" />
 		<div class="info">
 			<div class="name">{{ value.name }}</div>
 			<div class="buttons">
@@ -69,7 +73,9 @@ function updateThumbnail() {
 
 	&[active="true"] {
 		.thumbnail {
-			border-color: black;
+			outline: solid 2px black;
+			outline-offset: 2px;
+			box-shadow: 0 0 0 2px white;
 		}
 
 		.name::after {
@@ -87,7 +93,9 @@ function updateThumbnail() {
 	cursor: pointer;
 	image-rendering: optimizeQuality;
 	border-radius: 6px;
-	border: solid 2px hsl(0 0% 90% / 1.0);
+	// box-shadow: 0 0 0 2px hsl(0 0% 90% / 1.0);
+	outline: solid 2px hsl(0 0% 90% / 1.0);
+	outline-offset: 2px;
 }
 
 .info {

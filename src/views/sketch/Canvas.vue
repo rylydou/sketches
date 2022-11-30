@@ -10,7 +10,6 @@ var sessionStore = useSessionStore()
 var localStore = useLocalStore()
 
 let driver: SketchDriver
-let containsMouse = false
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
@@ -30,23 +29,6 @@ let distanceSqr = NaN
 let drawPath: Path2D
 
 onMounted(() => {
-	window.onkeydown = (ev) => {
-		if (ev.key == 'r')
-			clear()
-	}
-
-	loaded()
-
-	let dpi = 150.0
-	canvas.width = 11.0 * dpi
-	canvas.height = 8.5 * dpi
-	console.log({ width: canvas.width, height: canvas.height })
-
-	driver = new SketchDriver(canvas)
-	driver.redraw()
-})
-
-function loaded() {
 	if (ref_canvas.value == null) {
 		console.error('error getting canvas')
 		return
@@ -60,7 +42,13 @@ function loaded() {
 	ctx = tempCtx
 	ctx.imageSmoothingQuality = 'high'
 	ctx.imageSmoothingEnabled = true
-}
+
+	driver = new SketchDriver(canvas)
+	driver.redraw()
+
+	document.addEventListener('mousemove', mousemove)
+	document.addEventListener('mouseup', mouseup)
+})
 
 function touchstart(clientX: number, clientY: number) {
 	hideAllPoppers()
@@ -243,10 +231,11 @@ function mousemove(e: MouseEvent) {
 </script>
 
 <template>
-	<canvas ref="ref_canvas" class="canvas"
+	<canvas ref="ref_canvas" class="canvas" :width="sessionStore.sketch.width"
+		:height="sessionStore.sketch.height"
 		@touchstart="(e) => touchstart(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
 		@touchmove="(e) => touchmove(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
-		@touchend="touchend()" @mousedown="mousedown" @mouseup="mouseup" @mousemove="mousemove" />
+		@touchend="touchend()" @mousedown="mousedown" />
 </template>
 
 <style scoped>

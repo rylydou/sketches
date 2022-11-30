@@ -114,7 +114,7 @@ function closePopoversWithDelay(delayMs: number) {
 					</Button>
 
 					<template #popper>
-						<ColorPalette @picked="closePopoversWithDelay(200)" />
+						<ColorPalette @picked="closePopoversWithDelay(500)" />
 					</template>
 				</Dropdown>
 			</template>}

@@ -19,6 +19,8 @@ var emits = defineEmits<{
 	(e: 'update:modelValue', value: number): void,
 }>()
 
+var holdValue = NaN
+
 const value = computed({
 	get() {
 		return props.modelValue
@@ -56,6 +58,17 @@ function touchmove(e: TouchEvent) {
 	v = Math.round(v * 10.0) / 10.0
 	value.value = clamp(v)
 }
+
+function hold() {
+	if (isNaN(holdValue)) {
+		holdValue = value.value
+		return
+	}
+
+	var temp = value.value
+	value.value = holdValue
+	holdValue = temp
+}
 </script>
 
 <template>
@@ -66,7 +79,7 @@ function touchmove(e: TouchEvent) {
 			</slot>
 		</div>
 
-		<div ref="ref_value" class="btn value">{{
+		<div ref="ref_value" class="btn value" @click="hold()">{{
 				value
 		}}</div>
 

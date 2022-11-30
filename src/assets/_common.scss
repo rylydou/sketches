@@ -169,31 +169,30 @@ input[type="range"] {
 .v-popper__popper.v-popper__popper--hidden {
 	visibility: hidden;
 	opacity: 0;
-	transition: translate 400ms, opacity 400ms, visibility 400ms;
-	pointer-events: none;
+	transition: translate 400ms linear, opacity 100ms linear, visibility 400ms;
 }
 
 .v-popper__popper[data-popper-placement^=top].v-popper__popper--hidden {
-	translate: 0 -6px;
+	// translate: 0 -6px;
 }
 
 .v-popper__popper[data-popper-placement^=bottom].v-popper__popper--hidden {
-	translate: 0 6px;
+	// translate: 0 6px;
 }
 
 .v-popper__popper[data-popper-placement^=left].v-popper__popper--hidden {
-	translate: -6px 0;
+	// translate: -6px 0;
 }
 
 .v-popper__popper[data-popper-placement^=right].v-popper__popper--hidden {
-	translate: 6px 0;
+	// translate: 6px 0;
 }
 
 .v-popper__popper.v-popper__popper--shown {
 	visibility: visible;
 	opacity: 1;
-	translate: 0 0;
-	transition: translate 200ms, opacity 200ms;
+	// translate: 0 0;
+	transition: translate 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 100ms linear;
 }
 
 .v-popper__popper.v-popper__popper--skip-transition,
