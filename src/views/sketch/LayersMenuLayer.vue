@@ -1,12 +1,17 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
+import { hideAllPoppers } from 'floating-vue'
 
 import type { SketchLayer } from '@/models/Sketch'
-import { useSessionStore } from '@/store'
-import TrashIcon from '@/components/icons/TrashIcon.vue'
+
 import Button from '@/components/Button.vue'
+import DangerButton from '@/components/DangerButton.vue'
 import SwapIconButton from '@/components/SwapIconButton.vue'
-import { Dropdown, hideAllPoppers } from 'floating-vue'
+import TrashIcon from '@/components/icons/TrashIcon.vue'
+
+import { useSessionStore } from '@/store'
+import ShownIcon from '@/components/icons/ShownIcon.vue'
+import HiddenIcon from '@/components/icons/HiddenIcon.vue'
 let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
@@ -20,9 +25,9 @@ onMounted(() => {
 })
 
 function updateThumbnail() {
-	console.log('updating thumbnail for ' + props.value.name)
-
 	let ctx = ref_thumbnail.value!.getContext('2d')!
+	ctx.imageSmoothingEnabled = true
+	ctx.imageSmoothingQuality = 'high'
 	ctx.scale(1, 1)
 	ctx.clearRect(0, 0, ref_thumbnail.value!.width, props.value.canvas.height)
 
@@ -32,7 +37,7 @@ function updateThumbnail() {
 
 function pickLayer() {
 	sessionStore.currentLayer = props.value
-	setTimeout(() => hideAllPoppers(), 200)
+	// setTimeout(() => hideAllPoppers(), 2000)
 }
 
 </script>
@@ -43,20 +48,18 @@ function pickLayer() {
 		<div class="info">
 			<div class="name">{{ value.name }}</div>
 			<div class="buttons">
-				<SwapIconButton v-model="props.value.isHidden">
+				<SwapIconButton class="pop" v-model="props.value.isHidden">
+					<template #on>
+						<ShownIcon />
+					</template>
+					<template #off>
+						<HiddenIcon />
+					</template>
 				</SwapIconButton>
 				<div class="grow"></div>
-				<Dropdown>
-					<Button>
-						<TrashIcon />
-					</Button>
-
-					<template #popper>
-						<Button class="danger" @press="sessionStore.sketch.removeLayer(props.value)">
-							<TrashIcon /> Delete
-						</Button>
-					</template>
-				</Dropdown>
+				<DangerButton @press="sessionStore.sketch.removeLayer(props.value)">
+					<TrashIcon />
+				</DangerButton>
 			</div>
 		</div>
 	</div>
@@ -73,9 +76,9 @@ function pickLayer() {
 
 	&[active="true"] {
 		.thumbnail {
-			outline: solid 2px black;
+			outline-color: black;
 			outline-offset: 2px;
-			box-shadow: 0 0 0 2px white;
+			transition: scale 200ms cubic-bezier(0.34, 1.56, 0.64, 1), outline-color 200ms;
 		}
 
 		.name::after {
@@ -96,6 +99,14 @@ function pickLayer() {
 	// box-shadow: 0 0 0 2px hsl(0 0% 90% / 1.0);
 	outline: solid 2px hsl(0 0% 90% / 1.0);
 	outline-offset: 2px;
+	// transition when failed
+	transition: scale 400ms cubic-bezier(0.22, 1, 0.36, 1), outline-color 0ms;
+
+	&:active {
+		scale: 0.9;
+		transition: scale 50ms, outline-color 50ms;
+		outline-color: lightgray;
+	}
 }
 
 .info {

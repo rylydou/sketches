@@ -35,6 +35,7 @@ var sessionStore = useSessionStore()
 .layers-list {
 	display: flex;
 	flex-direction: column;
+	gap: 8px;
 
 	// max-height: 600px;
 	max-height: 75vh;

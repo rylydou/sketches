@@ -101,6 +101,7 @@ export class SketchDriver {
 
 		for (let index = this.sketch.layers.length - 1; index >= 0; index--) {
 			const layer = this.sketch.layers[index]
+			if (layer.isHidden) return
 			this.ctx.drawImage(layer.canvas, 0, 0)
 		}
 

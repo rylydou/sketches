@@ -24,7 +24,7 @@
 
 	transition: background-color 1000ms;
 
-	&:active {
+	&:active:not(.solid) {
 		background-color: hsl(0 0% 0% / 0.05);
 		transition: background-color 0ms;
 	}
@@ -32,11 +32,6 @@
 	&.solid {
 		transition: background-color 200ms, color 200ms;
 	}
-}
-
-.danger {
-	background-color: #ff595e;
-	color: white;
 }
 
 .radio-group {
@@ -169,30 +164,15 @@ input[type="range"] {
 .v-popper__popper.v-popper__popper--hidden {
 	visibility: hidden;
 	opacity: 0;
-	transition: translate 400ms linear, opacity 100ms linear, visibility 400ms;
-}
-
-.v-popper__popper[data-popper-placement^=top].v-popper__popper--hidden {
-	// translate: 0 -6px;
-}
-
-.v-popper__popper[data-popper-placement^=bottom].v-popper__popper--hidden {
-	// translate: 0 6px;
-}
-
-.v-popper__popper[data-popper-placement^=left].v-popper__popper--hidden {
-	// translate: -6px 0;
-}
-
-.v-popper__popper[data-popper-placement^=right].v-popper__popper--hidden {
-	// translate: 6px 0;
+	transition: filter 100ms, opacity 100ms linear, visibility 400ms;
+	filter: blur(4px);
 }
 
 .v-popper__popper.v-popper__popper--shown {
 	visibility: visible;
 	opacity: 1;
-	// translate: 0 0;
-	transition: translate 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 100ms linear;
+	transition: filter 0ms, opacity 0ms linear;
+	filter: blur(0px);
 }
 
 .v-popper__popper.v-popper__popper--skip-transition,

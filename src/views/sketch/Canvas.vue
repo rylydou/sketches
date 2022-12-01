@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { hideAllPoppers } from 'floating-vue'
 
 import { useLocalStore, useSessionStore } from '@/store'
@@ -48,6 +48,11 @@ onMounted(() => {
 
 	document.addEventListener('mousemove', mousemove)
 	document.addEventListener('mouseup', mouseup)
+	watch(sessionStore.sketch.layers, () => {
+		console.log('redrawing form layers list changing')
+
+		driver.redraw()
+	})
 })
 
 function touchstart(clientX: number, clientY: number) {
@@ -232,7 +237,7 @@ function mousemove(e: MouseEvent) {
 
 <template>
 	<canvas ref="ref_canvas" class="canvas" :width="sessionStore.sketch.width"
-		:height="sessionStore.sketch.height"
+		:height="sessionStore.sketch.height" @contextmenu="(ev) => ev.preventDefault()"
 		@touchstart="(e) => touchstart(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
 		@touchmove="(e) => touchmove(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
 		@touchend="touchend()" @mousedown="mousedown" />
@@ -248,7 +253,7 @@ function mousemove(e: MouseEvent) {
 	background-color: white;
 	image-rendering: optimizeQuality;
 
-	border-radius: 12px;
+	border-radius: 6px;
 	box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0);
 }
 </style>

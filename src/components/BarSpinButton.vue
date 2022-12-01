@@ -62,6 +62,12 @@ function touchmove(e: TouchEvent) {
 function hold() {
 	if (isNaN(holdValue)) {
 		holdValue = value.value
+
+		if (max != undefined && value.value != max)
+			value.value = max
+		else if (min != undefined && value.value != min)
+			value.value = min
+
 		return
 	}
 

@@ -54,8 +54,11 @@ function closePopoversWithDelay(delayMs: number) {
 
 			<template #middle>
 				<Dropdown placement="left" :offset-distance="16">
-					<Button>
+					<Button style="gap: 4px">
 						<LayersIcon />
+						{{ sessionStore.sketch.layers.length -
+								sessionStore.sketch.layers.indexOf(sessionStore.currentLayer)
+						}}
 					</Button>
 					<template #popper>
 						<LayersMenu />
@@ -89,7 +92,7 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 
 			<template #middle>
-				<SwapIconButton v-model="sessionStore.brushConfig.eraserSelected">
+				<SwapIconButton class="spin" v-model="sessionStore.brushConfig.eraserSelected">
 					<template #off>
 						<EditIcon />
 					</template>
