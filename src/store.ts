@@ -1,4 +1,4 @@
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { TouchCalibrationMode } from '@/types'
@@ -15,7 +15,18 @@ export const useSessionStore = defineStore('session', () => {
 
 	let dpi = 150
 	let sketch = reactive(new Sketch(11 * dpi, 8.5 * dpi))
-	let currentLayer = ref(sketch.layers[0])
+	let currentLayer = ref<SketchLayer | null>(sketch.layers[0])
+
+	watch(sketch.layers, () => {
+		if (currentLayer.value != null) {
+			if (sketch.layers.indexOf(currentLayer.value) < 0) {
+				if (sketch.layers.length == 0) {
+					console.error('no layers in sketch')
+				}
+				currentLayer.value = sketch.layers[0]
+			}
+		}
+	})
 
 	return {
 		brushConfig,

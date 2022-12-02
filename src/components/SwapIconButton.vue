@@ -23,9 +23,13 @@ const value = computed({
 		emits('update:modelValue', value)
 
 		// clearTimeout(animTimeoutId)
-		nextTick(() => { anim.value = true })
-		anim.value = false
-		// animTimeoutId = setTimeout(() => { anim.value = true }, 1)
+		if (anim.value == false) {
+			anim.value = true
+		}
+		else {
+			ref_btn.value?.addEventListener('animationcancel', (ev) => { anim.value = true }, { once: true })
+			anim.value = false
+		}
 	}
 })
 
@@ -63,6 +67,7 @@ onMounted(() => {
 	from {
 		scale: 1;
 		visibility: hidden;
+		opacity: 0;
 	}
 
 	1% {
@@ -72,6 +77,7 @@ onMounted(() => {
 
 	to {
 		scale: 1;
+		opacity: 1;
 	}
 }
 
@@ -80,6 +86,7 @@ onMounted(() => {
 }
 
 .btn.swap.anim.pop>.holder {
-	animation: pop 600ms cubic-bezier(0.16, 1, 0.3, 1);
+	// animation: pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+	animation: pop 200ms;
 }
 </style>

@@ -41,4 +41,22 @@ export class SketchLayer {
 		this.ctx.lineCap = 'round'
 		this.ctx.lineJoin = 'round'
 	}
+
+	public moveUp() {
+		let fromIndex = this.sketch.layers.indexOf(this)
+		if (fromIndex <= 0) return
+
+		let toIndex = fromIndex - 1
+		this.sketch.layers.splice(fromIndex, 1)[0]
+		this.sketch.layers.splice(toIndex, 0, this)
+	}
+
+	public moveDown() {
+		let fromIndex = this.sketch.layers.indexOf(this)
+		if (fromIndex < 0 || fromIndex >= this.sketch.layers.length - 1) return
+
+		let toIndex = fromIndex + 1
+		this.sketch.layers.splice(fromIndex, 1)[0]
+		this.sketch.layers.splice(toIndex, 0, this)
+	}
 }

@@ -41,7 +41,7 @@ function closePopoversWithDelay(delayMs: number) {
 </script>
 
 <template>
-	<div class="app">
+	<div class="app" @contextmenu="(ev) => ev.preventDefault()">
 		<Bar>
 			<template #start>
 				<Button>
@@ -57,7 +57,7 @@ function closePopoversWithDelay(delayMs: number) {
 					<Button style="gap: 4px">
 						<LayersIcon />
 						{{ sessionStore.sketch.layers.length -
-								sessionStore.sketch.layers.indexOf(sessionStore.currentLayer)
+								sessionStore.sketch.layers.indexOf(sessionStore.currentLayer!)
 						}}
 					</Button>
 					<template #popper>

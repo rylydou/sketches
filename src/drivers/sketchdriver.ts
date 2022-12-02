@@ -63,6 +63,7 @@ export class SketchDriver {
 
 	public touchMove(x: number, y: number) {
 		if (!this.startedDrawing) return
+		if (!this.sessionStore.currentLayer) return
 
 		let ctx = this.sessionStore.currentLayer.ctx
 		ctx.putImageData(this.baseImage, 0, 0)
@@ -84,6 +85,7 @@ export class SketchDriver {
 	public touchEnd() {
 		if (!this.startedDrawing) return
 		this.startedDrawing = false
+		if (!this.sessionStore.currentLayer) return
 
 		let ctx = this.sessionStore.currentLayer.ctx
 
@@ -101,7 +103,7 @@ export class SketchDriver {
 
 		for (let index = this.sketch.layers.length - 1; index >= 0; index--) {
 			const layer = this.sketch.layers[index]
-			if (layer.isHidden) return
+			if (layer.isHidden) continue
 			this.ctx.drawImage(layer.canvas, 0, 0)
 		}
 

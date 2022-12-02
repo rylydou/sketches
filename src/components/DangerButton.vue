@@ -18,11 +18,16 @@ function click(e: MouseEvent) {
 		isOpen.value = true
 	}
 }
+
+function mouseleave(ev: PointerEvent) {
+	setTimeout(() => isOpen.value = false, 50)
+}
+
 </script>
 
 <template>
 	<div role="button" :class="{ btn: true, solid: true, open: isOpen }" @click="click"
-		@mouseleave="isOpen = false">
+		@pointerleave="mouseleave">
 		<slot>
 			<NoneIcon style="color: red; outline: dashed 1px black; outline-offset: 2px;" />
 		</slot>

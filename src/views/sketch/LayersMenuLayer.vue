@@ -8,10 +8,12 @@ import Button from '@/components/Button.vue'
 import DangerButton from '@/components/DangerButton.vue'
 import SwapIconButton from '@/components/SwapIconButton.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
+import UpIcon from '@/components/icons/UpIcon.vue'
 
 import { useSessionStore } from '@/store'
 import ShownIcon from '@/components/icons/ShownIcon.vue'
 import HiddenIcon from '@/components/icons/HiddenIcon.vue'
+import DownIcon from '@/components/icons/DownIcon.vue'
 let sessionStore = useSessionStore()
 
 let ref_thumbnail = ref<HTMLCanvasElement>()
@@ -46,8 +48,7 @@ function pickLayer() {
 	<div class="layer" :active="sessionStore.currentLayer == props.value">
 		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128" @click="pickLayer()" />
 		<div class="info">
-			<div class="name">{{ value.name }}</div>
-			<div class="buttons">
+			<div class="name">
 				<SwapIconButton class="pop" v-model="props.value.isHidden">
 					<template #on>
 						<ShownIcon />
@@ -56,7 +57,20 @@ function pickLayer() {
 						<HiddenIcon />
 					</template>
 				</SwapIconButton>
+				{{ value.name }}
+			</div>
+			<div class="buttons">
+				<div class="h-group">
+					<Button @press="props.value.moveUp()">
+						<UpIcon />
+					</Button>
+					<Button @press="props.value.moveDown()">
+						<DownIcon />
+					</Button>
+				</div>
+
 				<div class="grow"></div>
+
 				<DangerButton @press="sessionStore.sketch.removeLayer(props.value)">
 					<TrashIcon />
 				</DangerButton>
@@ -118,9 +132,12 @@ function pickLayer() {
 }
 
 .name {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+
 	font-size: 20px;
-	line-height: 24px;
-	padding: 12px;
 	font-weight: bold;
 }
 
