@@ -15,7 +15,7 @@ var sessionStore = useSessionStore()
 			<AddLayerIcon /> Add layer
 		</Button>
 		<div class="layers-list">
-			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :key="layer.name"
+			<LayersMenuLayer v-for="layer in sessionStore.sketch.layers" :key="layer.name.slice(-1)"
 				:value="layer" />
 		</div>
 	</div>
@@ -29,16 +29,22 @@ var sessionStore = useSessionStore()
 	gap: 12px;
 
 	padding: 12px;
-	// min-width: 500px;
+	max-height: 75vh;
 }
 
 .layers-list {
+	position: relative;
+
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 
 	// max-height: 600px;
-	max-height: 75vh;
-	overflow-y: scroll;
+	overflow-y: overlay;
+	overflow-x: hidden;
+
+	&:empty {
+		display: none;
+	}
 }
 </style>

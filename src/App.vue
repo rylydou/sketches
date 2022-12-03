@@ -56,8 +56,7 @@ function closePopoversWithDelay(delayMs: number) {
 				<Dropdown placement="left" :offset-distance="16">
 					<Button style="gap: 4px">
 						<LayersIcon />
-						{{ sessionStore.sketch.layers.length -
-								sessionStore.sketch.layers.indexOf(sessionStore.currentLayer!)
+						{{ sessionStore.currentLayerLabel
 						}}
 					</Button>
 					<template #popper>
@@ -84,6 +83,11 @@ function closePopoversWithDelay(delayMs: number) {
 		</Bar>
 
 		<div class="pages">
+			<div class="overlay">
+				<span v-if="!sessionStore.currentLayer">⚠️ No layer selected</span>
+				<span v-if="sessionStore.currentLayer?.isHidden">⚠️ Hidden layer</span>
+			</div>
+
 			<Canvas />
 		</div>
 
@@ -137,7 +141,7 @@ function closePopoversWithDelay(delayMs: number) {
 	</div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .app {
 	display: flex;
 	flex-direction: row;
@@ -148,6 +152,7 @@ function closePopoversWithDelay(delayMs: number) {
 }
 
 .pages {
+	position: relative;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -156,5 +161,22 @@ function closePopoversWithDelay(delayMs: number) {
 	padding: 16px 0;
 	flex-grow: 1;
 	overflow: scroll;
+}
+
+.overlay {
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	translate: 0 -50%;
+
+	padding: 12px;
+	border-radius: 12px;
+	box-shadow: 0 0 0 2px hsl(0 0% 90% / 1.0);
+
+	background-color: white;
+
+	&:empty {
+		display: none;
+	}
 }
 </style>

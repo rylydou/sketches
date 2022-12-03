@@ -1,5 +1,5 @@
 import type { Sketch } from '@/models/Sketch'
-import { useSessionStore } from '@/store'
+import { useLocalStore, useSessionStore } from '@/store'
 import vec2 from '@/vecs/vec2'
 import { assert } from '@vue/compiler-core'
 import { hideAllPoppers } from 'floating-vue'
@@ -39,7 +39,7 @@ export class SketchDriver {
 	public touchStart(x: number, y: number) {
 		hideAllPoppers()
 		if (!this.sessionStore.currentLayer) {
-			console.error('Not drawing - No layer selected')
+			console.warn('Not drawing - No layer selected')
 			return
 		}
 		this.startedDrawing = true
@@ -64,6 +64,10 @@ export class SketchDriver {
 	public touchMove(x: number, y: number) {
 		if (!this.startedDrawing) return
 		if (!this.sessionStore.currentLayer) return
+
+		if (vec2.distance(this.lastPoint, new vec2([x, y])) < useLocalStore().drawingConfig.smoothing) {
+			return
+		}
 
 		let ctx = this.sessionStore.currentLayer.ctx
 		ctx.putImageData(this.baseImage, 0, 0)
@@ -101,6 +105,16 @@ export class SketchDriver {
 	public redraw() {
 		this.ctx.clearRect(0, 0, this.sketch.width, this.sketch.height)
 
+		let spacing = this.sketch.width / 32
+		this.ctx.fillStyle = 'hsl(0 0% 95%)'
+		for (let y = spacing / 2; y < this.sketch.height; y += spacing) {
+			for (let x = spacing / 2; x < this.sketch.width; x += spacing) {
+				this.ctx.beginPath()
+				this.ctx.arc(x, y, 4, 0, Math.PI * 2)
+				this.ctx.fill()
+			}
+		}
+
 		for (let index = this.sketch.layers.length - 1; index >= 0; index--) {
 			const layer = this.sketch.layers[index]
 			if (layer.isHidden) continue
@@ -111,4 +125,33 @@ export class SketchDriver {
 		// this.ctx.drawImage(layer.canvas, 0, 0)
 		// }
 	}
+
+	/*
+		ctx.save()
+
+	if (sessionStore.brushConfig.eraserSelected) {
+		ctx.beginPath()
+		ctx.lineWidth = 8
+		ctx.strokeStyle = 'white'
+		ctx.globalCompositeOperation = 'difference'
+		ctx.arc(x, y, sessionStore.brushSizePx / 2 + 6, 0, 2 * Math.PI)
+		ctx.stroke()
+	}
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'white'
+	ctx.globalCompositeOperation = 'source-over'
+	ctx.arc(x, y, sessionStore.brushSizePx / 2 + 2, 0, 2 * Math.PI)
+	ctx.stroke()
+
+	ctx.beginPath()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = 'black'
+	ctx.globalCompositeOperation = 'source-over'
+	ctx.arc(x, y, sessionStore.brushSizePx / 2, 0, 2 * Math.PI)
+	ctx.stroke()
+
+	ctx.restore()
+	 */
 }

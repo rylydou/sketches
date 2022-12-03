@@ -45,7 +45,8 @@ function pickLayer() {
 </script>
 
 <template>
-	<div class="layer" :active="sessionStore.currentLayer == props.value">
+	<div class="layer" :active="sessionStore.currentLayer == props.value"
+		:hidden="props.value.isHidden">
 		<canvas ref="ref_thumbnail" class="thumbnail" width="165" height="128" @click="pickLayer()" />
 		<div class="info">
 			<div class="name">
@@ -87,6 +88,8 @@ function pickLayer() {
 	padding: 6px;
 	border-radius: 12px;
 	width: 400px;
+
+	animation: in 1000ms;
 
 	&[active="true"] {
 		.thumbnail {

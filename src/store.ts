@@ -17,6 +17,11 @@ export const useSessionStore = defineStore('session', () => {
 	let sketch = reactive(new Sketch(11 * dpi, 8.5 * dpi))
 	let currentLayer = ref<SketchLayer | null>(sketch.layers[0])
 
+	let currentLayerLabel = computed<string>(() => {
+		if (currentLayer.value == null) return ''
+		return (sketch.layers.length - sketch.layers.indexOf(currentLayer.value!)).toString()
+	})
+
 	watch(sketch.layers, () => {
 		if (currentLayer.value != null) {
 			if (sketch.layers.indexOf(currentLayer.value) < 0) {
@@ -34,6 +39,7 @@ export const useSessionStore = defineStore('session', () => {
 
 		sketch,
 		currentLayer,
+		currentLayerLabel,
 	}
 })
 
