@@ -18,5 +18,4 @@ export var colors: string[] = [
 	'#4267AC',
 	'#6a4c93',
 	'#B55379',
-
 ]

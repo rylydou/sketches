@@ -84,8 +84,8 @@ function closePopoversWithDelay(delayMs: number) {
 
 		<div class="pages">
 			<div class="overlay">
-				<span v-if="!sessionStore.currentLayer">⚠️ No layer selected</span>
-				<span v-if="sessionStore.currentLayer?.isHidden">⚠️ Hidden layer</span>
+				<span v-if="!sessionStore.currentLayer">There is no layer selected</span>
+				<span v-if="sessionStore.currentLayer?.isHidden">This layer is hidden</span>
 			</div>
 
 			<Canvas />
@@ -174,6 +174,7 @@ function closePopoversWithDelay(delayMs: number) {
 	box-shadow: 0 0 0 2px hsl(0 0% 90% / 1.0);
 
 	background-color: white;
+	// background-color: #ffca3a;
 
 	&:empty {
 		display: none;
