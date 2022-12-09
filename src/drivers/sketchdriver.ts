@@ -6,8 +6,10 @@ import { hideAllPoppers } from 'floating-vue'
 import { computed } from 'vue'
 
 export class SketchDriver {
-	public readonly canvas: HTMLCanvasElement
-	public readonly ctx: CanvasRenderingContext2D
+	public readonly canvas: OffscreenCanvas
+	public readonly ctx: OffscreenCanvasRenderingContext2D
+
+	public onRedraw: ((this: SketchDriver) => void) | null = null
 
 	private get sketch() {
 		return this.sessionStore.sketch
@@ -15,11 +17,10 @@ export class SketchDriver {
 
 	private sessionStore = useSessionStore()
 
-	constructor(canvas: HTMLCanvasElement) {
-		this.canvas = canvas
-		this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+	constructor() {
+		this.canvas = new OffscreenCanvas(this.sketch.width, this.sketch.height)
+		this.ctx = this.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
 		assert(this.ctx != null)
-		// this.sketch = sketch
 	}
 
 	private startedDrawing = false
@@ -38,10 +39,8 @@ export class SketchDriver {
 
 	public touchStart(x: number, y: number) {
 		hideAllPoppers()
-		if (!this.sessionStore.currentLayer) {
-			console.warn('Not drawing - No layer selected')
-			return
-		}
+		if (!this.sessionStore.currentLayer) return
+		if (this.sessionStore.currentLayer.isHidden) return
 		this.startedDrawing = true
 
 		let ctx = this.sessionStore.currentLayer.ctx
@@ -105,15 +104,32 @@ export class SketchDriver {
 	public redraw() {
 		this.ctx.clearRect(0, 0, this.sketch.width, this.sketch.height)
 
-		let spacing = this.sketch.width / 32
-		this.ctx.fillStyle = 'hsl(0 0% 95%)'
-		for (let y = spacing / 2; y < this.sketch.height; y += spacing) {
-			for (let x = spacing / 2; x < this.sketch.width; x += spacing) {
-				this.ctx.beginPath()
-				this.ctx.arc(x, y, 4, 0, Math.PI * 2)
-				this.ctx.fill()
-			}
-		}
+		// let spacing = this.sketch.width / 32
+		// this.ctx.fillStyle = 'hsl(0 0% 95%)'
+		// for (let y = spacing / 2; y < this.sketch.height; y += spacing) {
+		// 	for (let x = spacing / 2; x < this.sketch.width; x += spacing) {
+		// 		this.ctx.beginPath()
+		// 		this.ctx.arc(x, y, 4, 0, Math.PI * 2)
+		// 		this.ctx.fill()
+		// 	}
+		// }
+
+		// let spacing = this.sketch.width / 32
+		// this.ctx.strokeStyle = 'hsl(0 0% 95%)'
+		// this.ctx.lineWidth = 2
+		// for (let i = 0; i < this.sketch.height; i += spacing) {
+		// 	this.ctx.beginPath()
+		// 	this.ctx.moveTo(0, i)
+		// 	this.ctx.lineTo(this.sketch.width, i)
+		// 	this.ctx.stroke()
+		// }
+
+		// for (let i = 0; i < this.sketch.width; i += spacing) {
+		// 	this.ctx.beginPath()
+		// 	this.ctx.moveTo(i, 0)
+		// 	this.ctx.lineTo(i, this.sketch.width)
+		// 	this.ctx.stroke()
+		// }
 
 		for (let index = this.sketch.layers.length - 1; index >= 0; index--) {
 			const layer = this.sketch.layers[index]
@@ -121,9 +137,11 @@ export class SketchDriver {
 			this.ctx.drawImage(layer.canvas, 0, 0)
 		}
 
-		// for (const layer of this.sketch.layers) {
-		// this.ctx.drawImage(layer.canvas, 0, 0)
-		// }
+		this.onRedraw?.call(this)
+	}
+
+	public clear() {
+		this.ctx.clearRect(0, 0, this.sketch.width, this.sketch.height)
 	}
 
 	/*

@@ -10,7 +10,8 @@ import { TouchCalibrationMode } from '@/types'
 var sessionStore = useSessionStore()
 var localStore = useLocalStore()
 
-let driver: SketchDriver
+let driver = new SketchDriver()
+let ctx: CanvasRenderingContext2D
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
@@ -21,8 +22,15 @@ onMounted(() => {
 		return
 	}
 	canvas = ref_canvas.value
+	ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+	ctx.imageSmoothingEnabled = true
+	ctx.imageSmoothingQuality = 'high'
 
-	driver = new SketchDriver(canvas)
+	driver.onRedraw = () => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
+		ctx.drawImage(driver.canvas, 0, 0)
+	}
+
 	driver.redraw()
 
 	document.addEventListener('mousemove', mousemove)
@@ -34,34 +42,48 @@ onMounted(() => {
 	})
 })
 
-function touchstart(clientX: number, clientY: number) {
+function touchstart(ev: TouchEvent) {
 	hideAllPoppers()
 
-	let x = transClientX(clientX)
-	let y = transClientY(clientY)
+	switch (ev.touches.length) {
+		case 1:
+			let touch = ev.touches.item(0)!
+			let x = transClientX(touch.clientX)
+			let y = transClientY(touch.clientY)
 
-	if (localStore.drawingConfig.touchCalibrationMode == TouchCalibrationMode.Stylus) {
-		y += localStore.stylusCalibration.offsetY
-	}
-	else {
-		y += localStore.fingerCalibration.offsetY
-	}
+			if (localStore.drawingConfig.touchCalibrationMode == TouchCalibrationMode.Stylus) {
+				y += localStore.stylusCalibration.offsetY
+			}
+			else {
+				y += localStore.fingerCalibration.offsetY
+			}
 
-	driver.touchStart(x, y)
+			driver.touchStart(x, y)
+			break
+		case 2:
+			break
+	}
 }
 
-function touchmove(clientX: number, clientY: number) {
-	let x = transClientX(clientX)
-	let y = transClientY(clientY)
+function touchmove(ev: TouchEvent) {
+	switch (ev.touches.length) {
+		case 1:
+			let touch = ev.touches.item(0)!
+			let x = transClientX(touch.clientX)
+			let y = transClientY(touch.clientY)
 
-	if (localStore.drawingConfig.touchCalibrationMode == TouchCalibrationMode.Stylus) {
-		y += localStore.stylusCalibration.offsetY
-	}
-	else {
-		y += localStore.fingerCalibration.offsetY
-	}
+			if (localStore.drawingConfig.touchCalibrationMode == TouchCalibrationMode.Stylus) {
+				y += localStore.stylusCalibration.offsetY
+			}
+			else {
+				y += localStore.fingerCalibration.offsetY
+			}
 
-	driver.touchMove(x, y)
+			driver.touchMove(x, y)
+			break
+		case 2:
+			break
+	}
 }
 
 function touchend() {
@@ -69,11 +91,14 @@ function touchend() {
 }
 
 function transClientX(x: number): number {
-	return (x - canvas.offsetLeft) / (canvas.clientWidth / canvas.width)
+	let rect = canvas.getBoundingClientRect()
+	return (x - rect.left) / (rect.width / canvas.width)
 }
 
 function transClientY(y: number): number {
-	return (y - canvas.offsetTop) / (canvas.clientHeight / canvas.height)
+	let rect = canvas.getBoundingClientRect()
+
+	return (y - rect.top) / (rect.height / canvas.height)
 }
 
 let mouseX = 0.0
@@ -101,24 +126,23 @@ function mousemove(e: MouseEvent) {
 </script>
 
 <template>
-	<canvas ref="ref_canvas" class="canvas" :width="sessionStore.sketch.width"
-		:height="sessionStore.sketch.height" @contextmenu="(ev) => ev.preventDefault()"
-		@touchstart="(e) => touchstart(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
-		@touchmove="(e) => touchmove(e.touches.item(0)!.clientX, e.touches.item(0)!.clientY)"
-		@touchend="touchend()" @mousedown="mousedown" />
+	<canvas ref="ref_canvas" class="canvas"
+		:width="ref_canvas?.parentElement?.getBoundingClientRect().width"
+		:height="ref_canvas?.parentElement?.getBoundingClientRect().height"
+		@contextmenu="(ev) => ev.preventDefault()" @touchstart="touchstart" @touchmove="touchmove"
+		@touchend="touchend" @mousedown="mousedown" />
 </template>
 
 <style scoped>
 .canvas {
+	flex-grow: 1;
 	cursor: crosshair;
 
-	aspect-ratio: 11 / 8.5;
-	/* max-width: 100%; */
-	/* max-height: 100%; */
 	background-color: white;
+	background-color: lightgreen;
 	image-rendering: optimizeQuality;
 
-	border-radius: 6px;
-	box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0);
+	/* border-radius: 6px; */
+	/* box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0); */
 }
 </style>

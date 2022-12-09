@@ -157,8 +157,6 @@ function closePopoversWithDelay(delayMs: number) {
 	flex-direction: row;
 	justify-content: center;
 	align-content: center;
-	gap: 24px;
-	padding: 16px 0;
 	flex-grow: 1;
 	overflow: scroll;
 }
