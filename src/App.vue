@@ -82,7 +82,7 @@ function closePopoversWithDelay(delayMs: number) {
 			</template>
 		</Bar>
 
-		<div class="pages">
+		<div class="view">
 			<div class="overlay">
 				<span v-if="!sessionStore.currentLayer">There is no layer selected</span>
 				<span v-if="sessionStore.currentLayer?.isHidden">This layer is hidden</span>
@@ -151,14 +151,12 @@ function closePopoversWithDelay(delayMs: number) {
 	background-color: white;
 }
 
-.pages {
-	position: relative;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-content: center;
+.view {
 	flex-grow: 1;
-	overflow: scroll;
+	position: relative;
+	overflow: hidden;
+	width: auto;
+	height: auto;
 }
 
 .overlay {

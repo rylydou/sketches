@@ -6,6 +6,7 @@ import { useLocalStore, useSessionStore } from '@/store'
 import { getDistance, getDistanceSqr } from '@/util'
 import { SketchDriver } from '@/drivers/sketchdriver'
 import { TouchCalibrationMode } from '@/types'
+import type { Rect } from '@floating-ui/core'
 
 var sessionStore = useSessionStore()
 var localStore = useLocalStore()
@@ -15,6 +16,9 @@ let ctx: CanvasRenderingContext2D
 
 let ref_canvas = ref<HTMLCanvasElement>()
 let canvas: HTMLCanvasElement
+
+let observer: ResizeObserver
+let rect: Rect = { x: 0, y: 0, width: 0, height: 0, }
 
 onMounted(() => {
 	if (ref_canvas.value == null) {
@@ -26,9 +30,51 @@ onMounted(() => {
 	ctx.imageSmoothingEnabled = true
 	ctx.imageSmoothingQuality = 'high'
 
+	observer = new ResizeObserver(() => {
+		canvas.width = canvas.offsetWidth
+		canvas.height = canvas.offsetHeight
+
+		driver.redraw()
+	})
+	observer.observe(canvas)
+
 	driver.onRedraw = () => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height)
-		ctx.drawImage(driver.canvas, 0, 0)
+
+		let scale = Math.min((canvas.width - 16) / driver.canvas.width, (canvas.height - 16) / driver.canvas.height)
+
+		let w = driver.canvas.width * scale
+		let h = driver.canvas.height * scale
+		let x = (canvas.width - w) / 2
+		let y = (canvas.height - h) / 2
+
+		rect.x = x
+		rect.y = y
+		rect.width = w
+		rect.height = h
+
+		ctx.drawImage(driver.canvas, x, y, w, h)
+
+		if (!CanvasRenderingContext2D.prototype.roundRect) {
+			CanvasRenderingContext2D.prototype.roundRect = function (x: number, y: number, w: number, h: number, r: number) {
+				if (w < 2 * r) r = w / 2
+				if (h < 2 * r) r = h / 2
+				this.beginPath()
+				this.moveTo(x + r, y)
+				this.arcTo(x + w, y, x + w, y + h, r)
+				this.arcTo(x + w, y + h, x, y + h, r)
+				this.arcTo(x, y + h, x, y, r)
+				this.arcTo(x, y, x + w, y, r)
+				this.closePath()
+				return this
+			}
+		}
+
+		ctx.beginPath()
+		ctx.strokeStyle = 'hsl(0 0% 90% / 1.0)'
+		ctx.lineWidth = 2
+		ctx.roundRect(x, y, w, h, 12)
+		ctx.stroke()
 	}
 
 	driver.redraw()
@@ -91,14 +137,17 @@ function touchend() {
 }
 
 function transClientX(x: number): number {
-	let rect = canvas.getBoundingClientRect()
-	return (x - rect.left) / (rect.width / canvas.width)
+	let bounds = canvas.getBoundingClientRect()
+	let ratio = sessionStore.sketch.width / rect.width
+	let pos = x - bounds.left - rect.x
+	return pos * ratio
 }
 
 function transClientY(y: number): number {
-	let rect = canvas.getBoundingClientRect()
-
-	return (y - rect.top) / (rect.height / canvas.height)
+	let bounds = canvas.getBoundingClientRect()
+	let ratio = sessionStore.sketch.height / rect.height
+	let pos = y - bounds.top - rect.y
+	return pos * ratio
 }
 
 let mouseX = 0.0
@@ -126,23 +175,16 @@ function mousemove(e: MouseEvent) {
 </script>
 
 <template>
-	<canvas ref="ref_canvas" class="canvas"
-		:width="ref_canvas?.parentElement?.getBoundingClientRect().width"
-		:height="ref_canvas?.parentElement?.getBoundingClientRect().height"
-		@contextmenu="(ev) => ev.preventDefault()" @touchstart="touchstart" @touchmove="touchmove"
-		@touchend="touchend" @mousedown="mousedown" />
+	<canvas ref="ref_canvas" class="canvas" @contextmenu="(ev) => ev.preventDefault()"
+		@touchstart="touchstart" @touchmove="touchmove" @touchend="touchend" @mousedown="mousedown" />
 </template>
 
 <style scoped>
 .canvas {
-	flex-grow: 1;
+	width: 100%;
+	height: 100%;
 	cursor: crosshair;
 
-	background-color: white;
-	background-color: lightgreen;
 	image-rendering: optimizeQuality;
-
-	/* border-radius: 6px; */
-	/* box-shadow: 0 0 0 2px hsla(0, 0%, 90%, 1.0); */
 }
 </style>
