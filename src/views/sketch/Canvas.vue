@@ -71,8 +71,8 @@ onMounted(() => {
 		}
 
 		ctx.beginPath()
-		ctx.strokeStyle = 'hsl(0 0% 90% / 1.0)'
-		ctx.lineWidth = 2
+		ctx.strokeStyle = 'hsl(0 0% 80% / 1.0)'
+		ctx.lineWidth = 0.5
 		ctx.roundRect(x, y, w, h, 12)
 		ctx.stroke()
 	}
